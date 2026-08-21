@@ -1,0 +1,4469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ambient — Calm Idle-Time Clock & Background</title>
+  <meta name="description" content="A calm, full-screen digital clock and ambient display designed for second monitors, work, and study sessions.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Baskervville:ital@0;1&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..800&family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Italiana&family=Marcellus&family=Philosopher:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Prata&family=Tenor+Sans&display=swap" rel="stylesheet">
+
+  <!-- Google AdSense Script -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7606917595989618" crossorigin="anonymous"></script>
+
+  <style>
+    /* ==========================================================================
+       CSS DESIGN SYSTEM & THEMES
+       ========================================================================== */
+    :root {
+      /* Font Families */
+      --font-clock-cinzel: 'Cinzel', serif;
+      --font-clock-playfair: 'Playfair Display', serif;
+      --font-clock-cormorant: 'Cormorant Garamond', serif;
+      --font-clock-bodoni: 'Bodoni Moda', serif;
+      --font-clock-prata: 'Prata', serif;
+      --font-clock-abril: 'Abril Fatface', serif;
+      --font-clock-marcellus: 'Marcellus', serif;
+      --font-clock-italiana: 'Italiana', serif;
+      --font-ui: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+      /* Active Clock Font Choice */
+      --font-clock: var(--font-clock-cinzel);
+
+      /* Global Layout Variables */
+      --bg-color: #05070f;
+      --text-main: #f8fafc;
+      --text-muted: rgba(248, 250, 252, 0.65);
+      --text-dim: rgba(248, 250, 252, 0.35);
+      --accent-color: #818cf8;
+      --accent-glow: rgba(129, 140, 248, 0.4);
+      --glass-bg: rgba(15, 23, 42, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-hover: rgba(255, 255, 255, 0.18);
+      --card-bg: rgba(30, 41, 59, 0.7);
+
+      /* Motion */
+      --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      --fade-duration: 0.6s;
+    }
+
+    /* THEME 1: STARFIELD (Obsidian Deep Space Navy) */
+    [data-theme="starfield"] {
+      --bg-color: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e1b4b 100%);
+      --text-main: #f8fafc;
+      --text-muted: rgba(248, 250, 252, 0.75);
+      --text-dim: rgba(248, 250, 252, 0.35);
+      --accent-color: #c084fc;
+      --accent-glow: rgba(192, 132, 252, 0.5);
+      --glass-bg: rgba(15, 23, 42, 0.7);
+      --glass-border: rgba(192, 132, 252, 0.2);
+      --glass-hover: rgba(192, 132, 252, 0.3);
+    }
+
+    /* THEME 2: FALLING RAIN (Stormy Oceanic Slate Teal) */
+    [data-theme="rain"] {
+      --bg-color: linear-gradient(135deg, #051322 0%, #0b253a 50%, #164e63 100%);
+      --text-main: #f0f9ff;
+      --text-muted: rgba(240, 249, 255, 0.75);
+      --text-dim: rgba(240, 249, 255, 0.35);
+      --accent-color: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.5);
+      --glass-bg: rgba(8, 30, 48, 0.7);
+      --glass-border: rgba(56, 189, 248, 0.25);
+      --glass-hover: rgba(56, 189, 248, 0.35);
+    }
+
+    /* THEME 3: SYNTHWAVE GRID (Retro Cyber Neon Purple & Magenta) */
+    [data-theme="synthwave"] {
+      --bg-color: linear-gradient(135deg, #160029 0%, #36004a 50%, #6b0042 100%);
+      --text-main: #fff0f6;
+      --text-muted: rgba(255, 240, 246, 0.8);
+      --text-dim: rgba(255, 240, 246, 0.4);
+      --accent-color: #ff007f;
+      --accent-glow: rgba(255, 0, 127, 0.65);
+      --glass-bg: rgba(45, 10, 60, 0.75);
+      --glass-border: rgba(255, 0, 127, 0.35);
+      --glass-hover: rgba(0, 243, 255, 0.35);
+    }
+
+    /* THEME 4: MATRIX SCANLINES (Hacker Cyber Terminal Emerald) */
+    [data-theme="matrix"] {
+      --bg-color: linear-gradient(135deg, #001206 0%, #00280f 50%, #014718 100%);
+      --text-main: #00ff66;
+      --text-muted: rgba(0, 255, 102, 0.8);
+      --text-dim: rgba(0, 255, 102, 0.4);
+      --accent-color: #00ff66;
+      --accent-glow: rgba(0, 255, 102, 0.55);
+      --glass-bg: rgba(4, 32, 16, 0.8);
+      --glass-border: rgba(0, 255, 102, 0.3);
+      --glass-hover: rgba(0, 255, 102, 0.45);
+    }
+
+    /* THEME 5: MINIMAL LIGHT (Soft Warm Cream & Coral) */
+    [data-theme="light"] {
+      --bg-color: linear-gradient(135deg, #fffcf5 0%, #f7f3e9 50%, #fee2e2 100%);
+      --text-main: #1e293b;
+      --text-muted: rgba(30, 41, 59, 0.75);
+      --text-dim: rgba(30, 41, 59, 0.45);
+      --accent-color: #e07a5f;
+      --accent-glow: rgba(224, 122, 95, 0.4);
+      --glass-bg: rgba(255, 255, 255, 0.8);
+      --glass-border: rgba(0, 0, 0, 0.1);
+      --glass-hover: rgba(0, 0, 0, 0.15);
+    }
+
+    /* THEME 6: AURORA BOREALIS (Northern Lights Emerald & Deep Indigo) */
+    [data-theme="aurora"] {
+      --bg-color: linear-gradient(135deg, #02131a 0%, #053329 50%, #0e5c46 100%);
+      --text-main: #f5f3ff;
+      --text-muted: rgba(245, 243, 255, 0.75);
+      --text-dim: rgba(245, 243, 255, 0.35);
+      --accent-color: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.55);
+      --glass-bg: rgba(10, 38, 30, 0.75);
+      --glass-border: rgba(16, 185, 129, 0.3);
+      --glass-hover: rgba(16, 185, 129, 0.4);
+    }
+
+    /* SOLID THEME 1: Pitch Black (Pure AMOLED 100% #000000) */
+    [data-theme="solid-black"] {
+      --bg-color: #000000;
+      --text-main: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.75);
+      --text-dim: rgba(255, 255, 255, 0.4);
+      --accent-color: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.35);
+      --glass-bg: #000000;
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-hover: rgba(255, 255, 255, 0.2);
+    }
+
+    body[data-theme="solid-black"],
+    html[data-theme="solid-black"] {
+      background: #000000 !important;
+      background-color: #000000 !important;
+    }
+
+    body[data-theme="solid-black"] #ambient-canvas,
+    html[data-theme="solid-black"] #ambient-canvas {
+      display: none !important;
+    }
+
+    /* SOLID THEME 2: Deep Midnight Sapphire */
+    [data-theme="solid-midnight"] {
+      --bg-color: #0a192f;
+      --text-main: #f0f6ff;
+      --text-muted: rgba(240, 246, 255, 0.75);
+      --text-dim: rgba(240, 246, 255, 0.35);
+      --accent-color: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.5);
+      --glass-bg: rgba(15, 30, 55, 0.8);
+      --glass-border: rgba(56, 189, 248, 0.25);
+      --glass-hover: rgba(56, 189, 248, 0.35);
+    }
+
+    /* SOLID THEME 3: Warm Charcoal Graphite */
+    [data-theme="solid-charcoal"] {
+      --bg-color: #18181b;
+      --text-main: #fafafa;
+      --text-muted: rgba(250, 250, 250, 0.75);
+      --text-dim: rgba(250, 250, 250, 0.35);
+      --accent-color: #fbbf24;
+      --accent-glow: rgba(251, 191, 36, 0.45);
+      --glass-bg: rgba(38, 38, 42, 0.8);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --glass-hover: rgba(255, 255, 255, 0.25);
+    }
+
+    /* SOLID THEME 4: Forest Sage Green */
+    [data-theme="solid-sage"] {
+      --bg-color: #08291b;
+      --text-main: #f0fdf4;
+      --text-muted: rgba(240, 253, 244, 0.75);
+      --text-dim: rgba(240, 253, 244, 0.35);
+      --accent-color: #34d399;
+      --accent-glow: rgba(52, 211, 153, 0.5);
+      --glass-bg: rgba(15, 50, 32, 0.8);
+      --glass-border: rgba(52, 211, 153, 0.25);
+      --glass-hover: rgba(52, 211, 153, 0.35);
+    }
+
+    /* SOLID THEME 5: Royal Plum Purple */
+    [data-theme="solid-plum"] {
+      --bg-color: #2a0a38;
+      --text-main: #faf5ff;
+      --text-muted: rgba(250, 245, 255, 0.75);
+      --text-dim: rgba(250, 245, 255, 0.35);
+      --accent-color: #c084fc;
+      --accent-glow: rgba(192, 132, 252, 0.5);
+      --glass-bg: rgba(55, 18, 72, 0.8);
+      --glass-border: rgba(192, 132, 252, 0.25);
+      --glass-hover: rgba(192, 132, 252, 0.35);
+    }
+
+    /* SOLID THEME 6: Soft Warm Cream */
+    [data-theme="solid-cream"] {
+      --bg-color: #f7f4eb;
+      --text-main: #1e293b;
+      --text-muted: rgba(30, 41, 59, 0.75);
+      --text-dim: rgba(30, 41, 59, 0.45);
+      --accent-color: #d97706;
+      --accent-glow: rgba(217, 119, 6, 0.35);
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(0, 0, 0, 0.12);
+      --glass-hover: rgba(0, 0, 0, 0.18);
+    }
+
+    /* SOLID THEME 7: Deep Crimson Ruby */
+    [data-theme="solid-ruby"] {
+      --bg-color: #3b0712;
+      --text-main: #ffe4e6;
+      --text-muted: rgba(255, 228, 230, 0.75);
+      --text-dim: rgba(255, 228, 230, 0.35);
+      --accent-color: #f43f5e;
+      --accent-glow: rgba(244, 63, 94, 0.5);
+      --glass-bg: rgba(70, 15, 25, 0.8);
+      --glass-border: rgba(244, 63, 94, 0.25);
+      --glass-hover: rgba(244, 63, 94, 0.35);
+    }
+
+    /* SOLID THEME 8: Deep Oceanic Teal */
+    [data-theme="solid-ocean"] {
+      --bg-color: #042f2e;
+      --text-main: #ccfbf1;
+      --text-muted: rgba(204, 251, 241, 0.75);
+      --text-dim: rgba(204, 251, 241, 0.35);
+      --accent-color: #14b8a6;
+      --accent-glow: rgba(20, 184, 166, 0.5);
+      --glass-bg: rgba(10, 55, 52, 0.8);
+      --glass-border: rgba(20, 184, 166, 0.25);
+      --glass-hover: rgba(20, 184, 166, 0.35);
+    }
+
+    /* PREMIUM THEME 1: Sakura Petal Drift (Rose Pink) */
+    [data-theme="premium-sakura"] {
+      --bg-color: linear-gradient(135deg, #23081e 0%, #451036 50%, #701a53 100%);
+      --text-main: #fce7f3;
+      --text-muted: rgba(252, 231, 243, 0.8);
+      --text-dim: rgba(252, 231, 243, 0.4);
+      --accent-color: #f472b6;
+      --accent-glow: rgba(244, 114, 182, 0.5);
+      --glass-bg: rgba(55, 18, 45, 0.8);
+      --glass-border: rgba(244, 114, 182, 0.3);
+      --glass-hover: rgba(244, 114, 182, 0.4);
+    }
+
+    /* PREMIUM THEME 2: Cozy Sunset Glow (Golden Amber) */
+    [data-theme="premium-sunset"] {
+      --bg-color: linear-gradient(135deg, #2b0b02 0%, #521603 50%, #852a06 100%);
+      --text-main: #fef3c7;
+      --text-muted: rgba(254, 243, 199, 0.8);
+      --text-dim: rgba(254, 243, 199, 0.4);
+      --accent-color: #fbbf24;
+      --accent-glow: rgba(251, 191, 36, 0.55);
+      --glass-bg: rgba(60, 20, 8, 0.8);
+      --glass-border: rgba(251, 191, 36, 0.3);
+      --glass-hover: rgba(251, 191, 36, 0.4);
+    }
+
+    /* PREMIUM THEME 3: Zen Forest Mist (Jade Mint) */
+    [data-theme="premium-mist"] {
+      --bg-color: linear-gradient(135deg, #021a14 0%, #053b2e 50%, #0d5e49 100%);
+      --text-main: #ccfbf1;
+      --text-muted: rgba(204, 251, 241, 0.8);
+      --text-dim: rgba(204, 251, 241, 0.4);
+      --accent-color: #2dd4bf;
+      --accent-glow: rgba(45, 212, 191, 0.5);
+      --glass-bg: rgba(8, 45, 35, 0.8);
+      --glass-border: rgba(45, 212, 191, 0.3);
+      --glass-hover: rgba(45, 212, 191, 0.4);
+    }
+
+    /* PREMIUM THEME 4: Cosmic Nebula Dust (Amethyst Violet) */
+    [data-theme="premium-nebula"] {
+      --bg-color: linear-gradient(135deg, #13062b 0%, #2e0e5c 50%, #52168a 100%);
+      --text-main: #fae8ff;
+      --text-muted: rgba(250, 232, 255, 0.8);
+      --text-dim: rgba(250, 232, 255, 0.4);
+      --accent-color: #c084fc;
+      --accent-glow: rgba(192, 132, 252, 0.55);
+      --glass-bg: rgba(38, 12, 75, 0.8);
+      --glass-border: rgba(192, 132, 252, 0.3);
+      --glass-hover: rgba(192, 132, 252, 0.4);
+    }
+
+    /* PREMIUM THEME 5: Kyoto Bamboo Grove (Lush Green) */
+    [data-theme="premium-bamboo"] {
+      --bg-color: linear-gradient(135deg, #032415 0%, #07472b 50%, #0b6b42 100%);
+      --text-main: #dcfce7;
+      --text-muted: rgba(220, 252, 231, 0.8);
+      --text-dim: rgba(220, 252, 231, 0.4);
+      --accent-color: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.5);
+      --glass-bg: rgba(10, 50, 30, 0.8);
+      --glass-border: rgba(16, 185, 129, 0.3);
+      --glass-hover: rgba(16, 185, 129, 0.4);
+    }
+
+    /* PREMIUM THEME 6: Provence Lavender Dream (Violet Lavender) */
+    [data-theme="premium-lavender"] {
+      --bg-color: linear-gradient(135deg, #170a2c 0%, #311357 50%, #5b1d96 100%);
+      --text-main: #f3e8ff;
+      --text-muted: rgba(243, 232, 255, 0.8);
+      --text-dim: rgba(243, 232, 255, 0.4);
+      --accent-color: #a855f7;
+      --accent-glow: rgba(168, 85, 247, 0.5);
+      --glass-bg: rgba(38, 16, 70, 0.8);
+      --glass-border: rgba(168, 85, 247, 0.3);
+      --glass-hover: rgba(168, 85, 247, 0.4);
+    }
+
+    /* PREMIUM THEME 7: Warm Hearth Ember (Crimson Orange) */
+    [data-theme="premium-cozy-fire"] {
+      --bg-color: linear-gradient(135deg, #2b0702 0%, #5e1304 50%, #9a2b09 100%);
+      --text-main: #ffedd5;
+      --text-muted: rgba(255, 237, 213, 0.8);
+      --text-dim: rgba(255, 237, 213, 0.4);
+      --accent-color: #f97316;
+      --accent-glow: rgba(249, 115, 22, 0.5);
+      --glass-bg: rgba(60, 16, 8, 0.8);
+      --glass-border: rgba(249, 115, 22, 0.3);
+      --glass-hover: rgba(249, 115, 22, 0.4);
+    }
+
+    /* PREMIUM THEME 8: Midnight Cloud Drift (Sapphire Night) */
+    [data-theme="premium-starlight-cloud"] {
+      --bg-color: linear-gradient(135deg, #040f26 0%, #0d2752 50%, #1d4685 100%);
+      --text-main: #e0f2fe;
+      --text-muted: rgba(224, 242, 254, 0.8);
+      --text-dim: rgba(224, 242, 254, 0.4);
+      --accent-color: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.5);
+      --glass-bg: rgba(12, 35, 68, 0.8);
+      --glass-border: rgba(56, 189, 248, 0.3);
+      --glass-hover: rgba(56, 189, 248, 0.4);
+    }
+
+    /* PREMIUM THEME 9: Refreshing Ocean Breeze (Cyan Azure) */
+    [data-theme="premium-ocean-breeze"] {
+      --bg-color: linear-gradient(135deg, #021d26 0%, #064552 50%, #0c6d7e 100%);
+      --text-main: #cffafe;
+      --text-muted: rgba(207, 250, 254, 0.8);
+      --text-dim: rgba(207, 250, 254, 0.4);
+      --accent-color: #06b6d4;
+      --accent-glow: rgba(6, 182, 212, 0.5);
+      --glass-bg: rgba(6, 50, 62, 0.8);
+      --glass-border: rgba(6, 182, 212, 0.3);
+      --glass-hover: rgba(6, 182, 212, 0.4);
+    }
+      --accent-color: #c084fc;
+      --accent-glow: rgba(192, 132, 252, 0.5);
+      --glass-bg: rgba(25, 18, 50, 0.75);
+      --glass-border: rgba(192, 132, 252, 0.25);
+      --glass-hover: rgba(192, 132, 252, 0.35);
+    }
+
+    /* PREMIUM THEME 5: Kyoto Bamboo Grove */
+    [data-theme="premium-bamboo"] {
+      --bg-color: #06180f;
+      --text-main: #dcfce7;
+      --text-muted: rgba(220, 252, 231, 0.75);
+      --text-dim: rgba(220, 252, 231, 0.35);
+      --accent-color: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.45);
+      --glass-bg: rgba(10, 35, 22, 0.75);
+      --glass-border: rgba(16, 185, 129, 0.25);
+      --glass-hover: rgba(16, 185, 129, 0.35);
+    }
+
+    /* PREMIUM THEME 6: Provence Lavender Dream */
+    [data-theme="premium-lavender"] {
+      --bg-color: #130f24;
+      --text-main: #f3e8ff;
+      --text-muted: rgba(243, 232, 255, 0.75);
+      --text-dim: rgba(243, 232, 255, 0.35);
+      --accent-color: #a855f7;
+      --accent-glow: rgba(168, 85, 247, 0.45);
+      --glass-bg: rgba(28, 20, 52, 0.75);
+      --glass-border: rgba(168, 85, 247, 0.25);
+      --glass-hover: rgba(168, 85, 247, 0.35);
+    }
+
+    /* PREMIUM THEME 7: Warm Hearth Ember */
+    [data-theme="premium-cozy-fire"] {
+      --bg-color: #1f0b08;
+      --text-main: #ffedd5;
+      --text-muted: rgba(255, 237, 213, 0.75);
+      --text-dim: rgba(255, 237, 213, 0.35);
+      --accent-color: #f97316;
+      --accent-glow: rgba(249, 115, 22, 0.45);
+      --glass-bg: rgba(45, 18, 12, 0.75);
+      --glass-border: rgba(249, 115, 22, 0.25);
+      --glass-hover: rgba(249, 115, 22, 0.35);
+    }
+
+    /* PREMIUM THEME 8: Midnight Cloud Drift */
+    [data-theme="premium-starlight-cloud"] {
+      --bg-color: #070e20;
+      --text-main: #e0f2fe;
+      --text-muted: rgba(224, 242, 254, 0.75);
+      --text-dim: rgba(224, 242, 254, 0.35);
+      --accent-color: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.45);
+      --glass-bg: rgba(12, 24, 48, 0.75);
+      --glass-border: rgba(56, 189, 248, 0.25);
+      --glass-hover: rgba(56, 189, 248, 0.35);
+    }
+
+    /* PREMIUM THEME 9: Pacific Cyan Breeze */
+    [data-theme="premium-ocean-breeze"] {
+      --bg-color: #041a24;
+      --text-main: #e0f7fa;
+      --text-muted: rgba(224, 247, 250, 0.75);
+      --text-dim: rgba(224, 247, 250, 0.35);
+      --accent-color: #06b6d4;
+      --accent-glow: rgba(6, 182, 212, 0.45);
+      --glass-bg: rgba(8, 38, 52, 0.75);
+      --glass-border: rgba(6, 182, 212, 0.25);
+      --glass-hover: rgba(6, 182, 212, 0.35);
+    }
+
+    /* Premium Badges & Pricing UI */
+    .premium-badge {
+      background: linear-gradient(135deg, #f59e0b, #ec4899);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 0.2em 0.55em;
+      border-radius: 999px;
+      margin-left: 0.4rem;
+      text-transform: uppercase;
+      vertical-align: middle;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+    }
+
+    .theme-card.locked {
+      position: relative;
+    }
+
+    .font-card.locked::after {
+      content: "🔒";
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-size: 0.8rem;
+    }
+
+    /* Font Specimen Preview Grid */
+    .fonts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    .font-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 0.85rem 0.6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition-smooth);
+    }
+
+    .font-card:hover {
+      background: var(--glass-hover);
+      border-color: var(--accent-color);
+      transform: translateY(-2px);
+    }
+
+    .font-card.active {
+      border-color: var(--accent-color);
+      background: rgba(129, 140, 248, 0.15);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .font-specimen {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.3rem;
+      line-height: 1;
+    }
+
+    .font-name {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .pricing-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 1.25rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition-smooth);
+    }
+
+    .pricing-card:hover, .pricing-card.selected {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      transform: translateY(-3px);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+    }
+
+    .pricing-discount-badge {
+      position: absolute;
+      top: -10px;
+      background: linear-gradient(135deg, #ef4444, #ec4899);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.2em 0.6em;
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+
+    .pricing-duration {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+
+    .pricing-price {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #fff;
+      margin: 0.5rem 0 0.2rem 0;
+    }
+
+    .pricing-period {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    /* Reset & Base Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg-color);
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      transition: background 0.6s ease, color 0.6s ease;
+    }
+
+    /* Background Canvas */
+    #ambient-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* CRT Scanline Overlay for Matrix Theme */
+    .scanline-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+      );
+      background-size: 100% 4px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    [data-theme="matrix"] .scanline-overlay {
+      opacity: 0.6;
+    }
+
+    /* Main Container */
+    #app-container {
+      position: relative;
+      z-index: 3;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2.5rem;
+      transition: opacity var(--fade-duration) ease;
+    }
+
+    /* Top Greeting Banner */
+    .greeting-container {
+      text-align: center;
+      margin-top: 1rem;
+      opacity: 0.9;
+      animation: fadeInDown 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .greeting-text {
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Centered Hero Clock Display */
+    .clock-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: auto 0;
+      text-align: center;
+      animation: zoomIn 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .clock-display {
+      font-family: var(--font-clock);
+      font-size: clamp(4.5rem, 16vw, 12rem);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      text-shadow: 0 0 40px var(--accent-glow), 0 4px 20px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .clock-seconds {
+      font-size: 0.38em;
+      font-weight: 400;
+      opacity: 0.75;
+      margin-left: 0.15em;
+    }
+
+    .clock-ampm {
+      font-size: 0.14em;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.75;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 0.15em 0.5em;
+      border-radius: 999px;
+      margin-left: 0.4em;
+      vertical-align: middle;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .date-display {
+      font-size: clamp(1.1rem, 2.8vw, 1.75rem);
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Widgets Layer */
+    .widgets-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+      max-width: 90%;
+      z-index: 4;
+      animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .widget-chip {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-main);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      transition: var(--transition-smooth);
+    }
+
+    .widget-chip:hover {
+      background: var(--glass-hover);
+      border-color: var(--accent-color);
+      transform: translateY(-2px);
+    }
+
+    /* Ambient Quote Widget */
+    .quote-widget {
+      max-width: 520px;
+      text-align: center;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    .quote-author {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      color: var(--accent-color);
+      margin-left: 0.5rem;
+    }
+
+    .quote-refresh-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 4px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .quote-refresh-btn:hover {
+      color: var(--accent-color);
+      transform: rotate(180deg);
+    }
+
+    /* Weather Widget */
+    .weather-widget {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .weather-icon {
+      font-size: 1.25rem;
+    }
+
+    .weather-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .weather-temp {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .weather-city {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Pomodoro Widget */
+    .pomodoro-widget {
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .pomodoro-timer {
+      font-family: var(--font-clock-cinzel);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      color: var(--accent-color);
+      min-width: 52px;
+    }
+
+    .pomodoro-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: var(--text-main);
+      padding: 0.35rem 0.65rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: var(--transition-smooth);
+    }
+
+    .pomodoro-btn:hover {
+      background: var(--accent-color);
+      color: #fff;
+    }
+
+    /* Countdown Widget */
+    .countdown-widget {
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .countdown-timer {
+      font-family: var(--font-clock-cinzel);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      color: var(--accent-color);
+      min-width: 65px;
+    }
+
+    .countdown-widget.finished {
+      animation: timerPulse 0.8s infinite alternate ease-in-out;
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.6) !important;
+    }
+
+    @keyframes timerPulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.05); }
+    }
+
+    .preset-pill-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: var(--transition-smooth);
+    }
+
+    .preset-pill-btn:hover, .preset-pill-btn.active {
+      background: var(--accent-color);
+      border-color: var(--accent-color);
+      color: #fff;
+    }
+
+    /* Google AdSense Banner Styling (Inside Settings Drawer) */
+    .adsense-container {
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 90px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    /* Corner Controls (Fullscreen & Gear) */
+    .corner-controls {
+      position: fixed;
+      bottom: 1.75rem;
+      left: 1.75rem;
+      right: 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .corner-controls.idle-hidden {
+      opacity: 0 !important;
+      transform: translateY(10px);
+      pointer-events: none !important;
+    }
+
+    .corner-btn {
+      pointer-events: auto;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-muted);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: var(--transition-smooth);
+    }
+
+    .corner-btn:hover, .corner-btn:focus-visible {
+      color: var(--text-main);
+      border-color: var(--accent-color);
+      background: var(--glass-hover);
+      transform: scale(1.1);
+      box-shadow: 0 0 20px var(--accent-glow);
+      outline: none;
+    }
+
+    .corner-btn.active {
+      color: var(--accent-color);
+      border-color: var(--accent-color);
+      background: var(--glass-hover);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    /* NIGHTSTAND / SLEEP MODE (ULTRA-DIM RED LIGHT MODE) */
+    body.nightstand-mode {
+      --bg-color: #000000 !important;
+      --text-main: #ef4444 !important;
+      --text-muted: rgba(239, 68, 68, 0.6) !important;
+      --text-dim: rgba(239, 68, 68, 0.35) !important;
+      --accent-color: #f87171 !important;
+      --accent-glow: rgba(239, 68, 68, 0.4) !important;
+      --glass-bg: rgba(20, 0, 0, 0.85) !important;
+      --glass-border: rgba(239, 68, 68, 0.25) !important;
+      --glass-hover: rgba(239, 68, 68, 0.35) !important;
+      background-color: #000000 !important;
+    }
+
+    body.nightstand-mode #ambient-canvas {
+      display: none !important;
+    }
+
+    body.nightstand-mode #clock-seconds,
+    body.nightstand-mode #screensaver-seconds,
+    body.nightstand-mode .clock-seconds {
+      display: none !important;
+    }
+
+    /* Settings Modal Drawer */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .settings-modal {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      width: 90%;
+      max-width: 650px;
+      max-height: 85vh;
+      border-radius: 24px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.active .settings-modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-smooth);
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 2rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent-color) rgba(0, 0, 0, 0.2);
+    }
+
+    /* Aesthetic Scrollbars for Settings Modal */
+    .modal-body {
+      padding: 2rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      scrollbar-width: auto;
+      scrollbar-color: var(--accent-color) rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-body::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .modal-body::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 999px;
+      margin: 0.25rem 0;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+      background: var(--accent-color);
+      border-radius: 999px;
+      box-shadow: 0 0 12px var(--accent-glow);
+      border: 2px solid rgba(0, 0, 0, 0.2);
+      transition: var(--transition-smooth);
+    }
+
+    .modal-body::-webkit-scrollbar-thumb:hover {
+      background: var(--text-main);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    .setting-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .setting-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent-color);
+    }
+
+    /* Themes Grid */
+    .themes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .theme-card {
+      background: rgba(0, 0, 0, 0.25);
+      border: 2px solid transparent;
+      border-radius: 14px;
+      padding: 1rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      transition: var(--transition-smooth);
+    }
+
+    .theme-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .theme-card.active {
+      border-color: var(--accent-color);
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    .theme-preview {
+      width: 100%;
+      height: 48px;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .theme-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Form Controls */
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+    }
+
+    .setting-label {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .setting-sublabel {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* Thicker Aesthetic Toggle Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 54px;
+      height: 30px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: 34px;
+      border: 1.5px solid var(--glass-border);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 2.5px;
+      background-color: var(--text-main);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: 50%;
+    }
+
+    .slider:hover {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    input:checked + .slider {
+      background: linear-gradient(135deg, var(--accent-color), var(--accent-glow));
+      border-color: var(--accent-color);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+      background-color: #ffffff;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Thicker Custom Range Sliders */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(255, 255, 255, 0.16);
+      height: 10px;
+      border-radius: 999px;
+      outline: none;
+      border: 1.5px solid var(--glass-border);
+      transition: var(--transition-smooth);
+    }
+
+    input[type="range"]:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: var(--accent-color);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent-color);
+      box-shadow: 0 0 12px var(--accent-glow);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      border: 2px solid #ffffff;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+      background: #ffffff;
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      background: var(--accent-color);
+      box-shadow: 0 0 12px var(--accent-glow);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    /* Form Inputs & Selects */
+    .input-field, .select-field {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .input-field:focus, .select-field:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .select-field option {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    .action-btn {
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .action-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    .secondary-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+    }
+
+    .secondary-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--text-main);
+    }
+
+    /* OLED SCREENSAVER OVERLAY */
+    #screensaver-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000000;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+    }
+
+    #screensaver-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+      cursor: none !important;
+    }
+
+    body.screensaver-active,
+    body.screensaver-active * {
+      cursor: none !important;
+    }
+
+    #screensaver-clock-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: transform 3s ease-in-out;
+    }
+
+
+
+    .screensaver-hero-clock {
+      font-family: var(--font-clock);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      text-align: center;
+      transition: font-size 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+      color: rgba(255, 255, 255, 0.45);
+      text-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+    }
+
+    /* Screensaver Clock Sizes */
+    .screensaver-size-small .screensaver-hero-clock { font-size: clamp(2.5rem, 5vw, 4.5rem); }
+    .screensaver-size-medium .screensaver-hero-clock { font-size: clamp(4rem, 11vw, 8.5rem); }
+    .screensaver-size-large .screensaver-hero-clock { font-size: clamp(5.5rem, 14vw, 11rem); }
+    .screensaver-size-xlarge .screensaver-hero-clock { font-size: clamp(7rem, 18vw, 14rem); }
+
+    /* Ultra-Massive Screen-Filling Maximum Fullscreen Scale */
+    .screensaver-size-full #screensaver-clock-container {
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      padding: 0;
+      margin: 0;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .screensaver-size-full .screensaver-hero-clock {
+      font-size: min(34vw, 58vh) !important;
+      line-height: 0.8 !important;
+      letter-spacing: -0.04em !important;
+      white-space: nowrap !important;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+    }
+
+    .screensaver-size-full .screensaver-hero-clock .clock-seconds {
+      font-size: 0.3em !important;
+      margin-left: 0.1em;
+    }
+
+    .screensaver-size-full .screensaver-hero-clock .clock-ampm {
+      font-size: 0.18em !important;
+      padding: 0.1em 0.35em !important;
+      margin-left: 0.15em;
+    }
+
+    .screensaver-size-full .screensaver-date-display {
+      font-size: min(4vw, 5.5vh) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .screensaver-date-display {
+      font-size: clamp(1rem, 2.2vw, 1.6rem);
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      margin-top: 1.25rem;
+      opacity: 0.7;
+      color: inherit;
+      text-shadow: inherit;
+      display: none;
+    }
+
+    /* Accessibility / Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Keyframe Animations */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 0.9; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body data-theme="solid-black">
+
+  <!-- Background Canvas for Animated Visual Themes -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- Optional CRT Scanline Effect (Active in Matrix Theme) -->
+  <div class="scanline-overlay"></div>
+
+  <!-- Main Viewport Overlay -->
+  <div id="app-container">
+    
+    <!-- Centered Digital Clock & Date Display -->
+    <main class="clock-container">
+      <div class="clock-display" id="clock-display" aria-label="Current Time">
+        <span id="clock-time">12:00</span>
+        <span id="clock-seconds" class="clock-seconds">00</span>
+        <span id="clock-ampm" class="clock-ampm">PM</span>
+      </div>
+      <div class="date-display" id="date-display">Monday, August 10, 2026</div>
+    </main>
+
+    <!-- Widgets Bar -->
+    <div class="widgets-wrapper" id="widgets-wrapper">
+      
+      <!-- Ambient Quote Chip -->
+      <div class="widget-chip quote-widget" id="quote-widget">
+        <span id="quote-text">"Simplicity is the ultimate sophistication."</span>
+        <span class="quote-author" id="quote-author">— Leonardo da Vinci</span>
+        <button class="quote-refresh-btn" id="quote-refresh-btn" title="Next Quote" aria-label="Next Quote">↻</button>
+      </div>
+
+      <!-- Weather Chip -->
+      <div class="widget-chip weather-widget" id="weather-widget">
+        <span class="weather-icon" id="weather-icon">🌤️</span>
+        <div class="weather-details">
+          <span class="weather-temp" id="weather-temp">72°F</span>
+          <span class="weather-city" id="weather-city">San Francisco</span>
+        </div>
+      </div>
+
+      <!-- Pomodoro Chip -->
+      <div class="widget-chip pomodoro-widget" id="pomodoro-widget">
+        <span>⏱️</span>
+        <span class="pomodoro-timer" id="pomodoro-timer">25:00</span>
+        <button class="pomodoro-btn" id="pomodoro-toggle-btn">Start</button>
+        <button class="pomodoro-btn" id="pomodoro-reset-btn" title="Reset Timer">↺</button>
+        <button class="pomodoro-btn" id="pomodoro-edit-btn" title="Set Focus Duration">✏️</button>
+      </div>
+
+      <!-- Custom Countdown Timer Chip -->
+      <div class="widget-chip countdown-widget" id="countdown-widget">
+        <span>⏳</span>
+        <span class="countdown-timer" id="countdown-timer">15:00</span>
+        <button class="pomodoro-btn" id="countdown-toggle-btn">Start</button>
+        <button class="pomodoro-btn" id="countdown-reset-btn" title="Reset Timer">↺</button>
+        <button class="pomodoro-btn" id="countdown-edit-btn" title="Set Countdown Duration">✏️</button>
+      </div>
+
+      <!-- Soundscape Generator Chip (Premium) -->
+      <div class="widget-chip soundscape-widget" id="soundscape-widget">
+        <span id="soundscape-icon">🎧</span>
+        <select id="soundscape-select" class="select-field" style="padding: 0.25rem 0.4rem; font-size: 0.8rem; background: none; border: none;">
+          <option value="off">Sounds Off</option>
+          <option value="rain">Gentle Rain 🌧️</option>
+          <option value="ocean">Ocean Surf 🌊</option>
+          <option value="pink">Pink Focus 🧠</option>
+        </select>
+        <input type="range" id="soundscape-volume" min="0" max="1" step="0.05" value="0.5" title="Audio Volume" style="width: 50px; accent-color: var(--accent-color);">
+      </div>
+
+      <!-- World Clock Multi-Timezone Chip -->
+      <div class="widget-chip worldclock-widget" id="worldclock-widget">
+        <span>🌍</span>
+        <div id="worldclock-times" style="display: flex; gap: 0.6rem; font-size: 0.82rem; font-weight: 500;">
+          <span>NY 11:45 AM</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Corner Controls (Fullscreen, Instant Screensaver & Settings Gear) -->
+  <div class="corner-controls" id="corner-controls">
+    <!-- Fullscreen Button (Bottom-Left) -->
+    <button class="corner-btn" id="fullscreen-btn" title="Toggle Fullscreen (F)" aria-label="Toggle Fullscreen">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+      </svg>
+    </button>
+
+    <!-- Right Corner Controls Group (Instant Screensaver, Nightstand Mode & Settings) -->
+    <div class="corner-controls-right" style="display: flex; gap: 0.75rem; pointer-events: auto;">
+      <!-- Nightstand / Sleep Mode Button (N) -->
+      <button class="corner-btn" id="nightstand-btn" title="Nightstand / Sleep Mode (N)" aria-label="Nightstand Mode">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          <path d="M15 6h3m-1.5-1.5v3" stroke-width="1.5"/>
+        </svg>
+      </button>
+
+      <!-- Instant Screensaver Button (To the left of Settings icon) -->
+      <button class="corner-btn" id="quick-screensaver-btn" title="Instant Screensaver (Z)" aria-label="Instant Screensaver">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <!-- Settings Gear Button (Bottom-Right) -->
+      <button class="corner-btn" id="settings-btn" title="Settings (S)" aria-label="Settings">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings Modal Overlay -->
+  <div class="modal-overlay" id="settings-overlay">
+    <div class="settings-modal" role="dialog" aria-labelledby="modal-heading">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-heading">
+          <span>⚙️</span> Ambient Preferences
+        </h2>
+        <button class="close-btn" id="close-modal-btn" aria-label="Close Settings">✕</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Visual Theme Selection -->
+        <div class="setting-group">
+          <div class="setting-title">Animated Background Themes</div>
+          <div class="themes-grid" id="themes-grid">
+            <div class="theme-card active" data-theme-id="starfield">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #030712, #1e1b4b);"></div>
+              <span class="theme-name">Starfield</span>
+            </div>
+            <div class="theme-card" data-theme-id="rain">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #0b1320, #1e293b);"></div>
+              <span class="theme-name">Falling Rain</span>
+            </div>
+            <div class="theme-card" data-theme-id="synthwave">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #130024, #ff007f);"></div>
+              <span class="theme-name">Synthwave Grid</span>
+            </div>
+            <div class="theme-card" data-theme-id="matrix">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #020d06, #00ff66);"></div>
+              <span class="theme-name">Matrix Scanlines</span>
+            </div>
+            <div class="theme-card" data-theme-id="light">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #f7f5f0, #e07a5f);"></div>
+              <span class="theme-name">Minimal Light</span>
+            </div>
+            <div class="theme-card" data-theme-id="aurora">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #060919, #10b981);"></div>
+              <span class="theme-name">Aurora Borealis</span>
+            </div>
+          </div>
+
+          <div class="setting-title" style="margin-top: 1.25rem; display: flex; align-items: center;">
+            <span>✨ Premium Soft & Aesthetic Themes</span>
+            <span class="premium-badge" id="premium-status-badge">PRICING PLANS</span>
+          </div>
+          <div class="themes-grid" id="premium-themes-grid">
+            <div class="theme-card locked" data-theme-id="premium-sakura">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #1a1126, #f472b6);"></div>
+              <span class="theme-name">Sakura Drift</span>
+            </div>
+            <div class="theme-card locked" data-theme-id="premium-sunset">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #1c0d18, #fbbf24);"></div>
+              <span class="theme-name">Sunset Glow</span>
+            </div>
+            <div class="theme-card locked" data-theme-id="premium-mist">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #071510, #2dd4bf);"></div>
+              <span class="theme-name">Zen Forest Mist</span>
+            </div>
+            <div class="theme-card locked" data-theme-id="premium-nebula">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #0a091c, #c084fc);"></div>
+              <span class="theme-name">Nebula Dust</span>
+            </div>
+            <div class="theme-card locked" data-theme-id="premium-bamboo">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #06180f, #10b981);"></div>
+              <span class="theme-name">Bamboo Grove 🎋</span>
+            </div>
+            <div class="theme-card locked" data-theme-id="premium-lavender">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #130f24, #a855f7);"></div>
+              <span class="theme-name">Lavender Dream 🪻</span>
+            </div>
+            <div class="theme-card locked" data-theme-id="premium-cozy-fire">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #1f0b08, #f97316);"></div>
+              <span class="theme-name">Cozy Ember 🔥</span>
+            </div>
+            <div class="theme-card locked" data-theme-id="premium-starlight-cloud">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #070e20, #38bdf8);"></div>
+              <span class="theme-name">Moonlight Cloud ☁️</span>
+            </div>
+            <div class="theme-card locked" data-theme-id="premium-ocean-breeze">
+              <div class="theme-preview" style="background: linear-gradient(135deg, #041a24, #06b6d4);"></div>
+              <span class="theme-name">Ocean Breeze 🌊</span>
+            </div>
+          </div>
+
+          <div class="setting-title" style="margin-top: 1.25rem;">Solid Color Themes</div>
+          <div class="themes-grid" id="solid-themes-grid">
+            <div class="theme-card" data-theme-id="solid-black">
+              <div class="theme-preview" style="background: #000000; border: 1px solid rgba(255,255,255,0.3);"></div>
+              <span class="theme-name">Pitch Black</span>
+            </div>
+            <div class="theme-card" data-theme-id="solid-midnight">
+              <div class="theme-preview" style="background: #0a192f; border: 1px solid rgba(56,189,248,0.3);"></div>
+              <span class="theme-name">Midnight Blue</span>
+            </div>
+            <div class="theme-card" data-theme-id="solid-charcoal">
+              <div class="theme-preview" style="background: #18181b; border: 1px solid rgba(251,191,36,0.3);"></div>
+              <span class="theme-name">Warm Charcoal</span>
+            </div>
+            <div class="theme-card" data-theme-id="solid-sage">
+              <div class="theme-preview" style="background: #08291b; border: 1px solid rgba(52,211,153,0.3);"></div>
+              <span class="theme-name">Forest Sage</span>
+            </div>
+            <div class="theme-card" data-theme-id="solid-plum">
+              <div class="theme-preview" style="background: #2a0a38; border: 1px solid rgba(192,132,252,0.3);"></div>
+              <span class="theme-name">Royal Plum</span>
+            </div>
+            <div class="theme-card" data-theme-id="solid-cream">
+              <div class="theme-preview" style="background: #f5f4ef;"></div>
+              <span class="theme-name">Soft Cream</span>
+            </div>
+          </div>
+
+          <!-- Custom Color Picker Row -->
+          <div class="setting-row" style="margin-top: 0.75rem;">
+            <div class="setting-label">
+              <span>Custom Solid Color</span>
+              <span class="setting-sublabel">Pick any custom background color</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <input type="color" id="custom-color-picker" value="#0f172a" style="width: 48px; height: 38px; border: 1px solid var(--glass-border); border-radius: 8px; cursor: pointer; background: none; padding: 2px;">
+              <button class="action-btn secondary-btn" id="apply-custom-color-btn" style="padding: 0.45rem 0.9rem; font-size: 0.85rem;">Set Color</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clock & Display Settings -->
+        <div class="setting-group">
+          <div class="setting-title">Display & Typography</div>
+          
+          <div class="setting-row" style="flex-direction: column; align-items: flex-start; gap: 0.5rem;">
+            <div class="setting-label">
+              <span>Clock Display Typeface</span>
+              <span class="setting-sublabel">Select a serif font with live specimen preview</span>
+            </div>
+            
+            <div class="fonts-grid" id="fonts-grid" style="width: 100%;">
+              <!-- Free Fonts -->
+              <div class="font-card active" data-font-id="Cinzel">
+                <div class="font-specimen" style="font-family: 'Cinzel', serif;">12:45</div>
+                <span class="font-name">Cinzel</span>
+              </div>
+              <div class="font-card" data-font-id="Playfair Display">
+                <div class="font-specimen" style="font-family: 'Playfair Display', serif;">12:45</div>
+                <span class="font-name">Playfair</span>
+              </div>
+              <div class="font-card" data-font-id="Cormorant Garamond">
+                <div class="font-specimen" style="font-family: 'Cormorant Garamond', serif;">12:45</div>
+                <span class="font-name">Cormorant</span>
+              </div>
+              <div class="font-card" data-font-id="Bodoni Moda">
+                <div class="font-specimen" style="font-family: 'Bodoni Moda', serif;">12:45</div>
+                <span class="font-name">Bodoni</span>
+              </div>
+
+              <!-- Premium Subscriber Fonts (Locked for free users) -->
+              <div class="font-card locked" data-font-id="Prata" data-premium="true">
+                <div class="font-specimen" style="font-family: 'Prata', serif;">12:45</div>
+                <span class="font-name">Prata ✨</span>
+              </div>
+              <div class="font-card locked" data-font-id="Abril Fatface" data-premium="true">
+                <div class="font-specimen" style="font-family: 'Abril Fatface', serif;">12:45</div>
+                <span class="font-name">Abril ✨</span>
+              </div>
+              <div class="font-card locked" data-font-id="Marcellus" data-premium="true">
+                <div class="font-specimen" style="font-family: 'Marcellus', serif;">12:45</div>
+                <span class="font-name">Marcellus ✨</span>
+              </div>
+              <div class="font-card locked" data-font-id="Italiana" data-premium="true">
+                <div class="font-specimen" style="font-family: 'Italiana', serif;">12:45</div>
+                <span class="font-name">Italiana ✨</span>
+              </div>
+              <div class="font-card locked" data-font-id="DM Serif Display" data-premium="true">
+                <div class="font-specimen" style="font-family: 'DM Serif Display', serif;">12:45</div>
+                <span class="font-name">DM Serif ✨</span>
+              </div>
+              <div class="font-card locked" data-font-id="Fraunces" data-premium="true">
+                <div class="font-specimen" style="font-family: 'Fraunces', serif;">12:45</div>
+                <span class="font-name">Fraunces ✨</span>
+              </div>
+              <div class="font-card locked" data-font-id="Baskervville" data-premium="true">
+                <div class="font-specimen" style="font-family: 'Baskervville', serif;">12:45</div>
+                <span class="font-name">Baskerville ✨</span>
+              </div>
+              <div class="font-card locked" data-font-id="Philosopher" data-premium="true">
+                <div class="font-specimen" style="font-family: 'Philosopher', sans-serif;">12:45</div>
+                <span class="font-name">Philosopher ✨</span>
+              </div>
+              <div class="font-card locked" data-font-id="Tenor Sans" data-premium="true">
+                <div class="font-specimen" style="font-family: 'Tenor Sans', sans-serif;">12:45</div>
+                <span class="font-name">Tenor Sans ✨</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row" style="margin-top: 1rem;">
+            <div class="setting-label">24-Hour Format</div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-24h">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Show Seconds</div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-seconds" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Widgets Settings -->
+        <div class="setting-group">
+          <div class="setting-title">Widgets Bar</div>
+
+          <div class="setting-row">
+            <div class="setting-label">Ambient Rotating Quote</div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-quote-widget">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Weather Chip Widget</div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-weather-widget">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <span>Weather Location & Units</span>
+              <span class="setting-sublabel">Enter any city worldwide or detect location</span>
+            </div>
+            <div style="display: flex; gap: 0.4rem; align-items: center;">
+              <input type="text" id="weather-city-input" class="input-field" placeholder="City Name" style="width: 120px;">
+              <button class="action-btn secondary-btn" id="weather-locate-btn" title="Detect Current Location" style="padding: 0.55rem 0.7rem; font-size: 0.9rem;">📍</button>
+              <select id="weather-unit-select" class="select-field" style="width: 65px;">
+                <option value="C">°C</option>
+                <option value="F">°F</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Pomodoro / Focus Timer</div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-pomodoro-widget">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Custom Countdown Timer</div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-countdown-widget">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Ambient Soundscape Chip</div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-soundscape-widget">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">World Clock Multi-Timezone</div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-worldclock-widget">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <span>World Clock Cities</span>
+              <span class="setting-sublabel">Select 3 global cities to display</span>
+            </div>
+            <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+              <select id="world-city-1" class="select-field" style="padding: 0.3rem 0.5rem; font-size: 0.8rem;">
+                <option value="America/New_York" selected>New York (EST)</option>
+                <option value="Europe/London">London (GMT)</option>
+                <option value="Europe/Paris">Paris (CET)</option>
+                <option value="Asia/Tokyo">Tokyo (JST)</option>
+                <option value="Asia/Dubai">Dubai (GST)</option>
+                <option value="Asia/Kolkata">Mumbai (IST)</option>
+                <option value="Australia/Sydney">Sydney (AEST)</option>
+                <option value="America/Los_Angeles">San Francisco (PST)</option>
+              </select>
+              <select id="world-city-2" class="select-field" style="padding: 0.3rem 0.5rem; font-size: 0.8rem;">
+                <option value="America/New_York">New York (EST)</option>
+                <option value="Europe/London" selected>London (GMT)</option>
+                <option value="Europe/Paris">Paris (CET)</option>
+                <option value="Asia/Tokyo">Tokyo (JST)</option>
+                <option value="Asia/Dubai">Dubai (GST)</option>
+                <option value="Asia/Kolkata">Mumbai (IST)</option>
+                <option value="Australia/Sydney">Sydney (AEST)</option>
+                <option value="America/Los_Angeles">San Francisco (PST)</option>
+              </select>
+              <select id="world-city-3" class="select-field" style="padding: 0.3rem 0.5rem; font-size: 0.8rem;">
+                <option value="America/New_York">New York (EST)</option>
+                <option value="Europe/London">London (GMT)</option>
+                <option value="Europe/Paris">Paris (CET)</option>
+                <option value="Asia/Tokyo" selected>Tokyo (JST)</option>
+                <option value="Asia/Dubai">Dubai (GST)</option>
+                <option value="Asia/Kolkata">Mumbai (IST)</option>
+                <option value="Australia/Sydney">Sydney (AEST)</option>
+                <option value="America/Los_Angeles">San Francisco (PST)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nightstand / Sleep Mode Settings -->
+        <div class="setting-group">
+          <div class="setting-title">Nightstand / Sleep Mode (N)</div>
+          
+          <div class="setting-row">
+            <div class="setting-label">
+              <span>Ultra-Dim Red Light Mode</span>
+              <span class="setting-sublabel">Soft red night vision (#ef4444), hides seconds & stops canvas CPU usage</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-nightstand-mode">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Screensaver Settings -->
+        <div class="setting-group">
+          <div class="setting-title">OLED Screensaver Customization</div>
+          
+          <div class="setting-row">
+            <div class="setting-label">
+              <span>Auto-Trigger Timeout</span>
+              <span class="setting-sublabel">Inactivity delay before screensaver</span>
+            </div>
+            <select id="screensaver-timeout-select" class="select-field">
+              <option value="0" selected>Off (Manual Only)</option>
+              <option value="0.5">30 Seconds</option>
+              <option value="2">2 Minutes</option>
+              <option value="5">5 Minutes</option>
+              <option value="10">10 Minutes</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <span>Display Date, Day & Year</span>
+              <span class="setting-sublabel">Show full date below screensaver clock</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-screensaver-date">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <span>Display AM / PM Badge</span>
+              <span class="setting-sublabel">Show AM/PM badge in screensaver mode</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-screensaver-ampm" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <span>Screensaver Time Size</span>
+              <span class="setting-sublabel">Adjust readout font scale</span>
+            </div>
+            <select id="screensaver-size-select" class="select-field">
+              <option value="small">Small</option>
+              <option value="medium" selected>Medium (Default)</option>
+              <option value="large">Large</option>
+              <option value="xlarge">Extra Large</option>
+              <option value="full">Maximum Fullscreen (Screen Fit)</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <span>Screensaver Time Color</span>
+              <span class="setting-sublabel">Choose a color for the drifting clock</span>
+            </div>
+            <select id="screensaver-color-select" class="select-field">
+              <option value="bright-white" selected>Bright Clear White ⚪</option>
+              <option value="dim-white">Ambient Dim White</option>
+              <option value="neon-cyan">Neon Cyan</option>
+              <option value="emerald">Emerald Green</option>
+              <option value="hot-pink">Hot Pink</option>
+              <option value="amber">Amber Gold</option>
+              <option value="sunset">Sunset Coral</option>
+              <option value="theme-accent">Active Theme Accent</option>
+              <option value="custom">Custom Color...</option>
+            </select>
+          </div>
+
+          <!-- Screensaver Custom Color Picker Row -->
+          <div class="setting-row" id="screensaver-custom-color-row" style="display: none;">
+            <div class="setting-label">Custom Screensaver Color</div>
+            <input type="color" id="screensaver-custom-color-picker" value="#38bdf8" style="width: 48px; height: 38px; border: 1px solid var(--glass-border); border-radius: 8px; cursor: pointer; background: none; padding: 2px;">
+          </div>
+
+          <div class="setting-row" style="margin-top: 0.5rem;">
+            <button class="action-btn" id="start-screensaver-btn" style="width: 100%;">
+              <span>🌙</span> Launch Screensaver Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Reset All Settings Button -->
+        <div class="setting-group" style="margin-top: 0.5rem;">
+          <button class="action-btn secondary-btn" id="reset-defaults-btn" style="width: 100%; border-color: rgba(239, 68, 68, 0.4); color: #f87171;">
+            🔄 Turn Off All Settings & Reset to Clean Default
+          </button>
+        </div>
+
+        <!-- Google AdSense Banner Container (Inside Settings Drawer) -->
+        <div class="setting-group" id="adsense-banner" style="margin-top: 0.5rem;">
+          <div class="setting-title">Sponsored Announcement</div>
+          <div class="adsense-container">
+            <!-- REPLACE ca-pub-XXXXXXXXXXXXXXXX AND data-ad-slot BELOW WITH YOUR ACTUAL ADSENSE DETAILS -->
+            <ins class="adsbygoogle"
+                 style="display:block; width:100%; height:90px;"
+                 data-ad-client="ca-pub-7606917595989618"
+                 data-ad-slot="1234567890"
+                 data-ad-format="horizontal"
+                 data-full-width-responsive="true"></ins>
+            <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Subscription Paywall Modal -->
+  <div class="modal-overlay" id="premium-modal-overlay">
+    <div class="settings-modal" style="max-width: 580px; text-align: center;">
+      <div class="modal-header">
+        <h2 class="modal-title" style="margin: 0 auto; color: #f59e0b;">
+          <span>✨</span> Ambient Premium Upgrade
+        </h2>
+        <button class="close-btn" id="close-premium-modal-btn" aria-label="Close Upgrade Modal">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.75rem 2rem;">
+        <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+          Unlock all 4 soft aesthetic themes (Sakura Drift, Sunset Glow, Zen Forest Mist, Nebula Dust), Web Audio Ambient Soundscapes, and Premium Tools.
+        </p>
+
+        <!-- Pricing Grid -->
+        <div class="pricing-grid" id="pricing-grid">
+          <div class="pricing-card" data-plan="3m" data-price="150">
+            <span class="pricing-duration">3 Months</span>
+            <div class="pricing-price">₹150</div>
+            <span class="pricing-period">₹50 / month</span>
+          </div>
+
+          <div class="pricing-card" data-plan="6m" data-price="250">
+            <span class="pricing-duration">6 Months</span>
+            <div class="pricing-price">₹250</div>
+            <span class="pricing-period">₹41.6 / month</span>
+          </div>
+
+          <div class="pricing-card selected" data-plan="1y" data-price="450">
+            <span class="pricing-discount-badge">10% OFF</span>
+            <span class="pricing-duration">1 Year</span>
+            <div class="pricing-price">₹450</div>
+            <span class="pricing-period">₹37.5 / month</span>
+          </div>
+        </div>
+
+        <button class="action-btn" id="activate-subscription-btn" style="width: 100%; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; padding: 0.9rem; font-size: 1rem;">
+          🚀 Activate Subscription (Instant Demo Unlock)
+        </button>
+        
+        <div style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--text-dim);">
+          🔒 Instant unlock • Cancel anytime • 100% Offline Capable
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Countdown Configuration Modal Overlay -->
+  <div class="modal-overlay" id="countdown-modal-overlay">
+    <div class="settings-modal" style="max-width: 480px;">
+      <div class="modal-header">
+        <h2 class="modal-title" style="font-size: 1.15rem;">
+          <span>⏳</span> Set Countdown Timer
+        </h2>
+        <button class="close-btn" id="close-countdown-modal-btn" aria-label="Close Countdown Settings">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.5rem 1.75rem; gap: 1.25rem;">
+        
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-color); display: block; margin-bottom: 0.6rem;">Quick Presets</label>
+          <div style="display: flex; gap: 0.45rem; flex-wrap: wrap;">
+            <button class="preset-pill-btn" data-preset="300">5 Min</button>
+            <button class="preset-pill-btn" data-preset="900">15 Min</button>
+            <button class="preset-pill-btn" data-preset="1800">30 Min</button>
+            <button class="preset-pill-btn" data-preset="2700">45 Min</button>
+            <button class="preset-pill-btn" data-preset="3600">1 Hour</button>
+            <button class="preset-pill-btn" data-preset="7200">2 Hours</button>
+            <button class="preset-pill-btn" data-preset="14400">4 Hours</button>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-color); display: block; margin-bottom: 0.6rem;">Custom Duration (Max 24 Hours)</label>
+          <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 16px; border: 1px solid var(--glass-border);">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <input type="number" id="cd-hours" class="input-field" min="0" max="24" value="0" style="width: 70px; text-align: center; font-size: 1.25rem; font-weight: 700; padding: 0.4rem;">
+              <span style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.35rem; font-weight: 600;">HOURS (0-24)</span>
+            </div>
+            <span style="font-size: 1.5rem; font-weight: 700; color: var(--accent-color); margin-top: -1rem;">:</span>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <input type="number" id="cd-mins" class="input-field" min="0" max="60" value="15" style="width: 70px; text-align: center; font-size: 1.25rem; font-weight: 700; padding: 0.4rem;">
+              <span style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.35rem; font-weight: 600;">MINS (0-60)</span>
+            </div>
+            <span style="font-size: 1.5rem; font-weight: 700; color: var(--accent-color); margin-top: -1rem;">:</span>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <input type="number" id="cd-secs" class="input-field" min="0" max="60" value="0" style="width: 70px; text-align: center; font-size: 1.25rem; font-weight: 700; padding: 0.4rem;">
+              <span style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.35rem; font-weight: 600;">SECS (0-60)</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+          <button class="action-btn" id="save-countdown-btn" style="flex: 1;">Save & Start Timer</button>
+          <button class="action-btn secondary-btn" id="set-only-countdown-btn" style="flex: 1;">Set Duration</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Pure Black OLED Screensaver Overlay -->
+  <div id="screensaver-overlay">
+    <div id="screensaver-clock-container">
+      <div class="clock-display screensaver-hero-clock" id="screensaver-hero-clock">
+        <span id="screensaver-time">12:00</span>
+        <span id="screensaver-seconds" class="clock-seconds">00</span>
+        <span id="screensaver-ampm" class="clock-ampm">PM</span>
+      </div>
+      <div class="date-display screensaver-date-display" id="screensaver-date">Monday, August 10, 2026</div>
+    </div>
+  </div>
+
+  <!-- JavaScript Application -->
+  <script>
+    /* ==========================================================================
+       AMBIENT APPLICATION CORE ENGINE
+       ========================================================================== */
+
+    // DEFAULT STATE CONFIGURATION
+    const DEFAULT_STATE = {
+      theme: 'solid-black',
+      customSolidColor: '#0f172a',
+      clockFont: 'Cinzel',
+      is24Hour: false,
+      showSeconds: true,
+      isNightstand: false,
+      showQuote: false,
+      showWeather: false,
+      weatherCity: 'San Francisco',
+      weatherUnit: 'F',
+      showPomodoro: false,
+      showCountdown: false,
+      countdownDurationSec: 15 * 60, // 15 min default
+      showAdSense: false,
+      screensaverTimeout: 0, // 0 = Off by default on first run
+      screensaverShowDate: false,
+      screensaverShowAmPm: true,
+      screensaverFontSize: 'medium',
+      screensaverColorMode: 'dim-white',
+      screensaverCustomColor: '#38bdf8',
+      isPremium: false,
+      subscriptionPlan: null,
+      activeSound: 'off',
+      soundVolume: 0.5,
+      showSoundscape: false,
+      showWorldClock: false,
+      worldCities: ['America/New_York', 'Europe/London', 'Asia/Tokyo']
+    };
+
+    // Application State Object
+    let state = { ...DEFAULT_STATE };
+
+    // Quotes Database
+    const QUOTES = [
+      { quote: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci" },
+      { quote: "Peace comes from within. Do not seek it without.", author: "Buddha" },
+      { quote: "The quieter you become, the more you can hear.", author: "Ram Dass" },
+      { quote: "Adopt the pace of nature: her secret is patience.", author: "Ralph Waldo Emerson" },
+      { quote: "Deep focus is the doorway to creative genius.", author: "Cal Newport" },
+      { quote: "Time is a created thing. To say 'I don't have time' is to say 'I don't want to'.", author: "Lao Tzu" },
+      { quote: "In the depth of winter, I finally learned that within me there lay an invincible summer.", author: "Albert Camus" },
+      { quote: "Be present in all things and thankful for all things.", author: "Maya Angelou" },
+      { quote: "Silence is a source of great strength.", author: "Lao Tzu" },
+      { quote: "Flow with whatever may happen, and let your mind be free.", author: "Zhuangzi" }
+    ];
+
+    /* ==========================================================================
+       LOCAL STORAGE & STATE MANAGEMENT
+       ========================================================================== */
+    function loadState() {
+      try {
+        const saved = localStorage.getItem('ambient_config');
+        if (saved) {
+          state = { ...DEFAULT_STATE, ...JSON.parse(saved) };
+        }
+      } catch (e) {
+        console.warn('LocalStorage unavailable:', e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('ambient_config', JSON.stringify(state));
+      } catch (e) {
+        console.warn('Failed to save to LocalStorage:', e);
+      }
+    }
+
+    function applyTheme(themeId) {
+      document.body.setAttribute('data-theme', themeId);
+
+      if (themeId === 'solid-custom') {
+        const hexColor = state.customSolidColor || '#0f172a';
+        document.body.style.setProperty('--bg-color', hexColor);
+        document.body.style.background = hexColor;
+
+        // Calculate contrast text colors based on background brightness
+        const hex = hexColor.replace('#', '');
+        const r = parseInt(hex.substring(0, 2), 16) || 0;
+        const g = parseInt(hex.substring(2, 4), 16) || 0;
+        const b = parseInt(hex.substring(4, 6), 16) || 0;
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+        if (luminance > 0.5) {
+          document.body.style.setProperty('--text-main', '#1e293b');
+          document.body.style.setProperty('--text-muted', 'rgba(30, 41, 59, 0.75)');
+          document.body.style.setProperty('--text-dim', 'rgba(30, 41, 59, 0.45)');
+          document.body.style.setProperty('--accent-color', '#2563eb');
+          document.body.style.setProperty('--accent-glow', 'rgba(37, 99, 235, 0.35)');
+          document.body.style.setProperty('--glass-bg', 'rgba(255, 255, 255, 0.85)');
+          document.body.style.setProperty('--glass-border', 'rgba(0, 0, 0, 0.12)');
+        } else {
+          document.body.style.setProperty('--text-main', '#f8fafc');
+          document.body.style.setProperty('--text-muted', 'rgba(248, 250, 252, 0.75)');
+          document.body.style.setProperty('--text-dim', 'rgba(248, 250, 252, 0.35)');
+          document.body.style.setProperty('--accent-color', '#818cf8');
+          document.body.style.setProperty('--accent-glow', 'rgba(129, 140, 248, 0.4)');
+          document.body.style.setProperty('--glass-bg', 'rgba(20, 20, 30, 0.8)');
+          document.body.style.setProperty('--glass-border', 'rgba(255, 255, 255, 0.15)');
+        }
+      } else {
+        document.body.style.removeProperty('--bg-color');
+        document.body.style.removeProperty('background');
+        document.body.style.removeProperty('background-color');
+        document.body.style.removeProperty('--text-main');
+        document.body.style.removeProperty('--text-muted');
+        document.body.style.removeProperty('--text-dim');
+        document.body.style.removeProperty('--accent-color');
+        document.body.style.removeProperty('--accent-glow');
+        document.body.style.removeProperty('--glass-bg');
+        document.body.style.removeProperty('--glass-border');
+      }
+    }
+    
+    function applyFont(fontName) {
+      state.clockFont = fontName;
+      document.documentElement.style.setProperty('--font-clock', `'${fontName}', serif`);
+      saveState();
+    }
+
+    /* ==========================================================================
+       PROCEDURAL CANVAS ANIMATION ENGINE (6 THEMES)
+       ========================================================================== */
+    class CanvasEngine {
+      constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.width = 0;
+        this.height = 0;
+        this.animationId = null;
+        this.isPaused = false;
+        this.particles = [];
+        this.matrixCols = [];
+        this.synthwaveOffset = 0;
+        this.blobs = [];
+        this.auroraTime = 0;
+
+        this.init();
+      }
+
+      init() {
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        this.setupTheme(state.theme);
+        this.loop();
+      }
+
+      resize() {
+        this.width = this.canvas.width = window.innerWidth;
+        this.height = this.canvas.height = window.innerHeight;
+        this.setupTheme(state.theme);
+      }
+
+      setupTheme(themeId) {
+        this.particles = [];
+        this.matrixCols = [];
+        this.blobs = [];
+
+        const isSolidTheme = themeId && (themeId.startsWith('solid-') || themeId === 'solid-black');
+        if (isSolidTheme) {
+          if (this.canvas) this.canvas.style.display = 'none';
+          this.pause();
+          return;
+        }
+
+        if (this.canvas) this.canvas.style.display = 'block';
+        if (this.isPaused && !state.isNightstand) {
+          this.resume();
+        }
+
+        if (themeId === 'starfield') {
+          const numStars = Math.floor((this.width * this.height) / 3500);
+          for (let i = 0; i < numStars; i++) {
+            this.particles.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              radius: Math.random() * 1.5 + 0.3,
+              alpha: Math.random() * 0.8 + 0.2,
+              twinkleSpeed: Math.random() * 0.02 + 0.005,
+              layer: Math.random() < 0.2 ? 2 : 1
+            });
+          }
+        } 
+        else if (themeId === 'rain') {
+          const numDrops = Math.floor(this.width / 4);
+          for (let i = 0; i < numDrops; i++) {
+            this.particles.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              length: Math.random() * 25 + 10,
+              speed: Math.random() * 10 + 12,
+              opacity: Math.random() * 0.4 + 0.1
+            });
+          }
+          // Ambient warm bokeh circles
+          for (let i = 0; i < 8; i++) {
+            this.blobs.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              radius: Math.random() * 100 + 50,
+              vx: (Math.random() - 0.5) * 0.3,
+              vy: (Math.random() - 0.5) * 0.3,
+              color: i % 2 === 0 ? 'rgba(56, 189, 248, 0.05)' : 'rgba(251, 146, 60, 0.04)'
+            });
+          }
+        } 
+        else if (themeId === 'matrix') {
+          const colWidth = 20;
+          const cols = Math.floor(this.width / colWidth);
+          for (let i = 0; i < cols; i++) {
+            this.matrixCols.push({
+              x: i * colWidth,
+              y: Math.random() * -this.height,
+              speed: Math.random() * 5 + 3,
+              chars: '0123456789ABCDEFｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜ'
+            });
+          }
+        } 
+        else if (themeId === 'light') {
+          const blobColors = [
+            'rgba(224, 122, 95, 0.12)',
+            'rgba(242, 204, 143, 0.15)',
+            'rgba(61, 64, 91, 0.08)',
+            'rgba(129, 140, 248, 0.1)'
+          ];
+          for (let i = 0; i < 6; i++) {
+            this.blobs.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              radius: Math.random() * 220 + 120,
+              vx: (Math.random() - 0.5) * 0.4,
+              vy: (Math.random() - 0.5) * 0.4,
+              color: blobColors[i % blobColors.length]
+            });
+          }
+        }
+        else if (themeId === 'aurora') {
+          for (let i = 0; i < 60; i++) {
+            this.particles.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              radius: Math.random() * 2 + 0.5,
+              alpha: Math.random() * 0.7 + 0.2,
+              vy: - (Math.random() * 0.4 + 0.1)
+            });
+          }
+        }
+        else if (themeId === 'premium-sakura') {
+          for (let i = 0; i < 45; i++) {
+            this.particles.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              size: Math.random() * 8 + 6,
+              vy: Math.random() * 1.2 + 0.8,
+              vx: Math.random() * 0.8 - 0.2,
+              angle: Math.random() * Math.PI * 2,
+              spinSpeed: (Math.random() - 0.5) * 0.03,
+              alpha: Math.random() * 0.6 + 0.3
+            });
+          }
+        }
+        else if (themeId === 'premium-sunset') {
+          for (let i = 0; i < 50; i++) {
+            this.particles.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              size: Math.random() * 3 + 1,
+              vy: - (Math.random() * 0.8 + 0.4),
+              vx: (Math.random() - 0.5) * 0.4,
+              alpha: Math.random() * 0.7 + 0.2,
+              color: i % 2 === 0 ? 'rgba(251, 191, 36, ' : 'rgba(248, 113, 113, '
+            });
+          }
+        }
+        else if (themeId === 'premium-mist') {
+          for (let i = 0; i < 35; i++) {
+            this.particles.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              radius: Math.random() * 140 + 80,
+              vx: Math.random() * 0.3 + 0.1,
+              color: 'rgba(45, 212, 191, 0.05)'
+            });
+          }
+        }
+        else if (themeId === 'premium-nebula') {
+          for (let i = 0; i < 70; i++) {
+            this.particles.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              radius: Math.random() * 2 + 0.5,
+              alpha: Math.random() * 0.8 + 0.2,
+              twinkleSpeed: Math.random() * 0.02 + 0.005
+            });
+          }
+          for (let i = 0; i < 5; i++) {
+            this.blobs.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              radius: Math.random() * 250 + 150,
+              vx: (Math.random() - 0.5) * 0.2,
+              vy: (Math.random() - 0.5) * 0.2,
+              color: i % 2 === 0 ? 'rgba(192, 132, 252, 0.08)' : 'rgba(45, 212, 191, 0.06)'
+            });
+          }
+        }
+        else if (themeId === 'premium-bamboo') {
+          for (let i = 0; i < 40; i++) {
+            this.particles.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              size: Math.random() * 9 + 5,
+              vy: Math.random() * 0.9 + 0.5,
+              vx: Math.random() * 0.6 - 0.2,
+              angle: Math.random() * Math.PI * 2,
+              spinSpeed: (Math.random() - 0.5) * 0.025,
+              alpha: Math.random() * 0.6 + 0.35
+            });
+          }
+        }
+        else if (themeId === 'premium-lavender') {
+          for (let i = 0; i < 50; i++) {
+            this.particles.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              radius: Math.random() * 2.5 + 0.8,
+              vy: - (Math.random() * 0.7 + 0.3),
+              vx: (Math.random() - 0.5) * 0.3,
+              alpha: Math.random() * 0.7 + 0.2
+            });
+          }
+          for (let i = 0; i < 6; i++) {
+            this.blobs.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              radius: Math.random() * 180 + 90,
+              vx: (Math.random() - 0.5) * 0.25,
+              vy: (Math.random() - 0.5) * 0.25,
+              color: 'rgba(168, 85, 247, 0.06)'
+            });
+          }
+        }
+        else if (themeId === 'premium-cozy-fire') {
+          for (let i = 0; i < 45; i++) {
+            this.particles.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              size: Math.random() * 3 + 1,
+              vy: - (Math.random() * 0.9 + 0.4),
+              vx: (Math.random() - 0.5) * 0.5,
+              alpha: Math.random() * 0.8 + 0.2
+            });
+          }
+        }
+        else if (themeId === 'premium-starlight-cloud') {
+          for (let i = 0; i < 60; i++) {
+            this.particles.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              radius: Math.random() * 2 + 0.5,
+              alpha: Math.random() * 0.8 + 0.2,
+              twinkleSpeed: Math.random() * 0.02 + 0.005
+            });
+          }
+          for (let i = 0; i < 4; i++) {
+            this.blobs.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              radius: Math.random() * 220 + 120,
+              vx: (Math.random() - 0.5) * 0.2,
+              color: 'rgba(56, 189, 248, 0.06)'
+            });
+          }
+        }
+        else if (themeId === 'premium-ocean-breeze') {
+          for (let i = 0; i < 40; i++) {
+            this.particles.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              radius: Math.random() * 2.5 + 0.8,
+              vy: Math.random() * 0.8 + 0.4,
+              alpha: Math.random() * 0.65 + 0.25
+            });
+          }
+        }
+      }
+
+      pause() {
+        this.isPaused = true;
+        if (this.animationId) {
+          cancelAnimationFrame(this.animationId);
+          this.animationId = null;
+        }
+        if (this.ctx) {
+          this.ctx.clearRect(0, 0, this.width, this.height);
+        }
+      }
+
+      resume() {
+        if (!this.isPaused) return;
+        this.isPaused = false;
+        this.loop();
+      }
+
+      loop() {
+        if (this.isPaused) return;
+
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        
+        switch (state.theme) {
+          case 'starfield':
+            this.renderStarfield();
+            break;
+          case 'rain':
+            this.renderRain();
+            break;
+          case 'synthwave':
+            this.renderSynthwave();
+            break;
+          case 'matrix':
+            this.renderMatrix();
+            break;
+          case 'light':
+            this.renderLightMode();
+            break;
+          case 'aurora':
+            this.renderAurora();
+            break;
+          case 'premium-sakura':
+            this.renderSakura();
+            break;
+          case 'premium-sunset':
+            this.renderSunset();
+            break;
+          case 'premium-mist':
+            this.renderMist();
+            break;
+          case 'premium-nebula':
+            this.renderNebula();
+            break;
+          case 'premium-bamboo':
+            this.renderBamboo();
+            break;
+          case 'premium-lavender':
+            this.renderLavender();
+            break;
+          case 'premium-cozy-fire':
+            this.renderCozyFire();
+            break;
+          case 'premium-starlight-cloud':
+            this.renderStarlightCloud();
+            break;
+          case 'premium-ocean-breeze':
+            this.renderOceanBreeze();
+            break;
+        }
+
+        this.animationId = requestAnimationFrame(() => this.loop());
+      }
+
+      renderStarfield() {
+        // Draw twinkling stars
+        for (let p of this.particles) {
+          p.alpha += p.twinkleSpeed;
+          if (p.alpha > 0.95 || p.alpha < 0.15) p.twinkleSpeed = -p.twinkleSpeed;
+
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = `rgba(249, 250, 251, ${p.alpha})`;
+          this.ctx.shadowBlur = p.layer === 2 ? 8 : 0;
+          this.ctx.shadowColor = '#a78bfa';
+          this.ctx.fill();
+        }
+      }
+
+      renderRain() {
+        // Render background bokeh circles
+        for (let b of this.blobs) {
+          b.x += b.vx;
+          b.y += b.vy;
+          if (b.x < -b.radius) b.x = this.width + b.radius;
+          if (b.x > this.width + b.radius) b.x = -b.radius;
+          if (b.y < -b.radius) b.y = this.height + b.radius;
+          if (b.y > this.height + b.radius) b.y = -b.radius;
+
+          this.ctx.beginPath();
+          this.ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = b.color;
+          this.ctx.fill();
+        }
+
+        // Render rain drops
+        this.ctx.shadowBlur = 0;
+        this.ctx.strokeStyle = 'rgba(186, 230, 253, 0.4)';
+        this.ctx.lineWidth = 1.2;
+        this.ctx.beginPath();
+        for (let p of this.particles) {
+          this.ctx.moveTo(p.x, p.y);
+          this.ctx.lineTo(p.x - 1, p.y + p.length);
+          p.y += p.speed;
+          if (p.y > this.height) {
+            p.y = -p.length;
+            p.x = Math.random() * this.width;
+          }
+        }
+        this.ctx.stroke();
+      }
+
+      renderSynthwave() {
+        const horizonY = this.height * 0.6;
+
+        // Background sky stars
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        for (let i = 0; i < 30; i++) {
+          const sx = (Math.sin(i * 99) * 0.5 + 0.5) * this.width;
+          const sy = (Math.cos(i * 33) * 0.5 + 0.5) * (horizonY - 20);
+          this.ctx.fillRect(sx, sy, 1.5, 1.5);
+        }
+
+        // Retro Glowing Sun
+        const sunX = this.width / 2;
+        const sunY = horizonY - 40;
+        const sunRadius = Math.min(this.width, this.height) * 0.16;
+
+        const sunGrad = this.ctx.createLinearGradient(sunX, sunY - sunRadius, sunX, sunY + sunRadius);
+        sunGrad.addColorStop(0, '#ffe5ec');
+        sunGrad.addColorStop(0.5, '#ff007f');
+        sunGrad.addColorStop(1, '#7928ca');
+
+        this.ctx.save();
+        this.ctx.beginPath();
+        this.ctx.arc(sunX, sunY, sunRadius, 0, Math.PI * 2);
+        this.ctx.fillStyle = sunGrad;
+        this.ctx.shadowBlur = 40;
+        this.ctx.shadowColor = '#ff007f';
+        this.ctx.fill();
+
+        // Horizontal sun cuts
+        this.ctx.fillStyle = '#130024';
+        for (let i = 0; i < 6; i++) {
+          const cutY = sunY + (i * 12) - 10;
+          const cutHeight = 2 + i * 1.5;
+          if (cutY < sunY + sunRadius) {
+            this.ctx.fillRect(sunX - sunRadius - 10, cutY, sunRadius * 2 + 20, cutHeight);
+          }
+        }
+        this.ctx.restore();
+
+        // Moving Perspective Grid
+        this.synthwaveOffset = (this.synthwaveOffset + 1.5) % 40;
+        this.ctx.strokeStyle = 'rgba(0, 243, 255, 0.4)';
+        this.ctx.lineWidth = 1.5;
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowColor = '#00f3ff';
+
+        // Perspective vertical lines
+        const numVLines = 24;
+        for (let i = -numVLines / 2; i <= numVLines / 2; i++) {
+          const startX = sunX + i * 20;
+          const endX = sunX + i * (this.width / 8);
+          this.ctx.beginPath();
+          this.ctx.moveTo(startX, horizonY);
+          this.ctx.lineTo(endX, this.height);
+          this.ctx.stroke();
+        }
+
+        // Horizontal moving lines
+        for (let y = horizonY; y <= this.height; y += 15) {
+          const progress = (y - horizonY) / (this.height - horizonY);
+          const drawY = horizonY + Math.pow(progress, 2.2) * (this.height - horizonY) + (this.synthwaveOffset * progress);
+          if (drawY <= this.height) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, drawY);
+            this.ctx.lineTo(this.width, drawY);
+            this.ctx.stroke();
+          }
+        }
+      }
+
+      renderMatrix() {
+        this.ctx.fillStyle = 'rgba(0, 255, 102, 0.85)';
+        this.ctx.font = '14px monospace';
+
+        for (let col of this.matrixCols) {
+          const char = col.chars[Math.floor(Math.random() * col.chars.length)];
+          this.ctx.fillText(char, col.x, col.y);
+
+          col.y += col.speed * 3;
+          if (col.y > this.height && Math.random() > 0.95) {
+            col.y = 0;
+          }
+        }
+      }
+
+      renderLightMode() {
+        for (let b of this.blobs) {
+          b.x += b.vx;
+          b.y += b.vy;
+          if (b.x < -b.radius) b.x = this.width + b.radius;
+          if (b.x > this.width + b.radius) b.x = -b.radius;
+          if (b.y < -b.radius) b.y = this.height + b.radius;
+          if (b.y > this.height + b.radius) b.y = -b.radius;
+
+          this.ctx.beginPath();
+          this.ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = b.color;
+          this.ctx.fill();
+        }
+      }
+
+      renderAurora() {
+        this.auroraTime += 0.008;
+
+        // Flowing Sine Wave Ribbons
+        const grad = this.ctx.createLinearGradient(0, 0, this.width, this.height);
+        grad.addColorStop(0, 'rgba(16, 185, 129, 0.15)');
+        grad.addColorStop(0.5, 'rgba(139, 92, 246, 0.18)');
+        grad.addColorStop(1, 'rgba(56, 189, 248, 0.12)');
+
+        this.ctx.fillStyle = grad;
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, this.height * 0.4);
+
+        for (let x = 0; x <= this.width; x += 30) {
+          const y = Math.sin(x * 0.003 + this.auroraTime) * 80 + 
+                    Math.cos(x * 0.005 - this.auroraTime * 0.8) * 50 + 
+                    this.height * 0.35;
+          this.ctx.lineTo(x, y);
+        }
+
+        this.ctx.lineTo(this.width, this.height);
+        this.ctx.lineTo(0, this.height);
+        this.ctx.closePath();
+        this.ctx.fill();
+
+        // Shimmering upward dust particles
+        this.ctx.fillStyle = 'rgba(16, 185, 129, 0.6)';
+        for (let p of this.particles) {
+          p.y += p.vy;
+          if (p.y < 0) {
+            p.y = this.height;
+            p.x = Math.random() * this.width;
+          }
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
+      }
+
+      renderSakura() {
+        for (let p of this.particles) {
+          p.y += p.vy;
+          p.x += p.vx + Math.sin(p.y * 0.02) * 0.5;
+          p.angle += p.spinSpeed;
+
+          if (p.y > this.height) {
+            p.y = -20;
+            p.x = Math.random() * this.width;
+          }
+
+          this.ctx.save();
+          this.ctx.translate(p.x, p.y);
+          this.ctx.rotate(p.angle);
+          this.ctx.fillStyle = `rgba(244, 114, 182, ${p.alpha})`;
+          this.ctx.beginPath();
+          this.ctx.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.restore();
+        }
+      }
+
+      renderSunset() {
+        for (let p of this.particles) {
+          p.y += p.vy;
+          p.x += p.vx;
+          if (p.y < 0) {
+            p.y = this.height;
+            p.x = Math.random() * this.width;
+          }
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          this.ctx.fillStyle = `${p.color}${p.alpha})`;
+          this.ctx.shadowBlur = 10;
+          this.ctx.shadowColor = '#fbbf24';
+          this.ctx.fill();
+        }
+      }
+
+      renderMist() {
+        for (let b of this.particles) {
+          b.x += b.vx;
+          if (b.x > this.width + b.radius) b.x = -b.radius;
+          this.ctx.beginPath();
+          this.ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = b.color;
+          this.ctx.fill();
+        }
+      }
+
+      renderNebula() {
+        for (let b of this.blobs) {
+          b.x += b.vx;
+          b.y += b.vy;
+          if (b.x < -b.radius) b.x = this.width + b.radius;
+          if (b.x > this.width + b.radius) b.x = -b.radius;
+          if (b.y < -b.radius) b.y = this.height + b.radius;
+          if (b.y > this.height + b.radius) b.y = -b.radius;
+
+          this.ctx.beginPath();
+          this.ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = b.color;
+          this.ctx.fill();
+        }
+
+        for (let p of this.particles) {
+          p.alpha += p.twinkleSpeed;
+          if (p.alpha > 0.95 || p.alpha < 0.15) p.twinkleSpeed = -p.twinkleSpeed;
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = `rgba(250, 232, 255, ${p.alpha})`;
+          this.ctx.fill();
+        }
+      }
+
+      renderBamboo() {
+        for (let p of this.particles) {
+          p.y += p.vy;
+          p.x += p.vx + Math.sin(p.y * 0.015) * 0.4;
+          p.angle += p.spinSpeed;
+
+          if (p.y > this.height) {
+            p.y = -20;
+            p.x = Math.random() * this.width;
+          }
+
+          this.ctx.save();
+          this.ctx.translate(p.x, p.y);
+          this.ctx.rotate(p.angle);
+          this.ctx.fillStyle = `rgba(16, 185, 129, ${p.alpha})`;
+          this.ctx.beginPath();
+          this.ctx.ellipse(0, 0, p.size, p.size * 0.4, 0, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.restore();
+        }
+      }
+
+      renderLavender() {
+        for (let b of this.blobs) {
+          b.x += b.vx;
+          b.y += b.vy;
+          if (b.x < -b.radius) b.x = this.width + b.radius;
+          if (b.x > this.width + b.radius) b.x = -b.radius;
+          if (b.y < -b.radius) b.y = this.height + b.radius;
+          if (b.y > this.height + b.radius) b.y = -b.radius;
+
+          this.ctx.beginPath();
+          this.ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = b.color;
+          this.ctx.fill();
+        }
+
+        for (let p of this.particles) {
+          p.y += p.vy;
+          p.x += p.vx;
+          if (p.y < 0) {
+            p.y = this.height;
+            p.x = Math.random() * this.width;
+          }
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = `rgba(168, 85, 247, ${p.alpha})`;
+          this.ctx.shadowBlur = 8;
+          this.ctx.shadowColor = '#a855f7';
+          this.ctx.fill();
+        }
+      }
+
+      renderCozyFire() {
+        for (let p of this.particles) {
+          p.y += p.vy;
+          p.x += p.vx + Math.sin(p.y * 0.03) * 0.6;
+          p.alpha += (Math.random() - 0.5) * 0.05;
+          p.alpha = Math.min(Math.max(p.alpha, 0.2), 0.9);
+
+          if (p.y < 0) {
+            p.y = this.height;
+            p.x = Math.random() * this.width;
+          }
+
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          this.ctx.fillStyle = `rgba(249, 115, 22, ${p.alpha})`;
+          this.ctx.shadowBlur = 12;
+          this.ctx.shadowColor = '#f97316';
+          this.ctx.fill();
+        }
+      }
+
+      renderStarlightCloud() {
+        for (let b of this.blobs) {
+          b.x += b.vx;
+          if (b.x > this.width + b.radius) b.x = -b.radius;
+          this.ctx.beginPath();
+          this.ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = b.color;
+          this.ctx.fill();
+        }
+
+        for (let p of this.particles) {
+          p.alpha += p.twinkleSpeed;
+          if (p.alpha > 0.95 || p.alpha < 0.15) p.twinkleSpeed = -p.twinkleSpeed;
+
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = `rgba(186, 230, 253, ${p.alpha})`;
+          this.ctx.shadowBlur = 6;
+          this.ctx.shadowColor = '#38bdf8';
+          this.ctx.fill();
+        }
+      }
+
+      renderOceanBreeze() {
+        for (let p of this.particles) {
+          p.y += p.vy;
+          p.x += Math.sin(p.y * 0.01) * 0.5;
+
+          if (p.y > this.height) {
+            p.y = -10;
+            p.x = Math.random() * this.width;
+          }
+
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = `rgba(6, 182, 212, ${p.alpha})`;
+          this.ctx.shadowBlur = 8;
+          this.ctx.shadowColor = '#06b6d4';
+          this.ctx.fill();
+        }
+      }
+    }
+
+    /* ==========================================================================
+       CLOCK & GREETING MANAGER
+       ========================================================================== */
+    class ClockManager {
+      constructor() {
+        this.timeEl = document.getElementById('clock-time');
+        this.secondsEl = document.getElementById('clock-seconds');
+        this.ampmEl = document.getElementById('clock-ampm');
+        this.dateEl = document.getElementById('date-display');
+
+        this.updateClock();
+        setInterval(() => this.updateClock(), 1000);
+      }
+
+      updateClock() {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+
+        // 12h / 24h Time Logic
+        let ampm = '';
+        if (!state.is24Hour) {
+          ampm = hours >= 12 ? 'PM' : 'AM';
+          hours = hours % 12;
+          hours = hours ? hours : 12; // 0 becomes 12
+        }
+
+        const formattedHours = String(hours).padStart(state.is24Hour ? 2 : 1, '0');
+        this.timeEl.textContent = `${formattedHours}:${minutes}`;
+
+        // Seconds Visibility
+        if (state.showSeconds) {
+          this.secondsEl.style.display = 'inline';
+          this.secondsEl.textContent = seconds;
+        } else {
+          this.secondsEl.style.display = 'none';
+        }
+
+        // AM/PM Badge Visibility
+        if (!state.is24Hour) {
+          this.ampmEl.style.display = 'inline-block';
+          this.ampmEl.textContent = ampm;
+        } else {
+          this.ampmEl.style.display = 'none';
+        }
+
+        // Date Display Formatting
+        const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+        this.dateEl.textContent = now.toLocaleDateString(undefined, options);
+      }
+    }
+
+    /* ==========================================================================
+       WIDGETS MANAGER (QUOTES, WEATHER, POMODORO)
+       ========================================================================== */
+    class WidgetManager {
+      constructor() {
+        this.quoteTextEl = document.getElementById('quote-text');
+        this.quoteAuthorEl = document.getElementById('quote-author');
+        this.quoteRefreshBtn = document.getElementById('quote-refresh-btn');
+
+        this.weatherIconEl = document.getElementById('weather-icon');
+        this.weatherTempEl = document.getElementById('weather-temp');
+        this.weatherCityEl = document.getElementById('weather-city');
+
+        this.pomodoroTimerEl = document.getElementById('pomodoro-timer');
+        this.pomodoroToggleBtn = document.getElementById('pomodoro-toggle-btn');
+        this.pomodoroResetBtn = document.getElementById('pomodoro-reset-btn');
+        this.pomodoroEditBtn = document.getElementById('pomodoro-edit-btn');
+
+        // Countdown Setup
+        this.countdownWidgetEl = document.getElementById('countdown-widget');
+        this.countdownTimerEl = document.getElementById('countdown-timer');
+        this.countdownToggleBtn = document.getElementById('countdown-toggle-btn');
+        this.countdownResetBtn = document.getElementById('countdown-reset-btn');
+        this.countdownEditBtn = document.getElementById('countdown-edit-btn');
+
+        this.countdownModalOverlay = document.getElementById('countdown-modal-overlay');
+        this.closeCountdownModalBtn = document.getElementById('close-countdown-modal-btn');
+        this.saveCountdownBtn = document.getElementById('save-countdown-btn');
+        this.setOnlyCountdownBtn = document.getElementById('set-only-countdown-btn');
+
+        this.cdHoursInput = document.getElementById('cd-hours');
+        this.cdMinsInput = document.getElementById('cd-mins');
+        this.cdSecsInput = document.getElementById('cd-secs');
+
+        this.worldClockTimesEl = document.getElementById('worldclock-times');
+
+        this.quoteIndex = 0;
+        this.editingTarget = 'countdown'; // 'pomodoro' or 'countdown'
+
+        this.pomodoroTotalSec = state.pomodoroDurationSec || (25 * 60);
+        this.pomodoroTimeLeft = this.pomodoroTotalSec;
+        this.pomodoroRunning = false;
+        this.pomodoroInterval = null;
+
+        this.countdownTotalSec = state.countdownDurationSec || 900; // 15 min default
+        this.countdownTimeLeft = this.countdownTotalSec;
+        this.countdownRunning = false;
+        this.countdownInterval = null;
+
+        this.init();
+      }
+
+      init() {
+        // Quote Refresh Event
+        this.quoteRefreshBtn.addEventListener('click', () => this.nextQuote());
+        this.nextQuote();
+        setInterval(() => this.nextQuote(), 60000); // Cycle every 60s
+
+        // Weather Setup
+        this.updateWeatherDisplay();
+
+        // Pomodoro Setup
+        if (this.pomodoroToggleBtn) this.pomodoroToggleBtn.addEventListener('click', () => this.togglePomodoro());
+        if (this.pomodoroResetBtn) this.pomodoroResetBtn.addEventListener('click', () => this.resetPomodoro());
+        if (this.pomodoroEditBtn) this.pomodoroEditBtn.addEventListener('click', () => this.openCountdownModal('pomodoro'));
+        this.renderPomodoro();
+
+        // Countdown Setup
+        if (this.countdownToggleBtn) this.countdownToggleBtn.addEventListener('click', () => this.toggleCountdown());
+        if (this.countdownResetBtn) this.countdownResetBtn.addEventListener('click', () => this.resetCountdown());
+        if (this.countdownEditBtn) this.countdownEditBtn.addEventListener('click', () => this.openCountdownModal('countdown'));
+        if (this.closeCountdownModalBtn) this.closeCountdownModalBtn.addEventListener('click', () => this.closeCountdownModal());
+
+        if (this.countdownModalOverlay) {
+          this.countdownModalOverlay.addEventListener('click', (e) => {
+            if (e.target === this.countdownModalOverlay) this.closeCountdownModal();
+          });
+        }
+
+        document.querySelectorAll('#countdown-modal-overlay .preset-pill-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const sec = parseInt(btn.dataset.preset, 10);
+            if (sec > 0) {
+              const h = Math.floor(sec / 3600);
+              const m = Math.floor((sec % 3600) / 60);
+              const s = sec % 60;
+              if (this.cdHoursInput) this.cdHoursInput.value = h;
+              if (this.cdMinsInput) this.cdMinsInput.value = m;
+              if (this.cdSecsInput) this.cdSecsInput.value = s;
+            }
+          });
+        });
+
+        if (this.saveCountdownBtn) {
+          this.saveCountdownBtn.addEventListener('click', () => {
+            this.applyCustomCountdownFromInputs(true);
+            this.closeCountdownModal();
+          });
+        }
+
+        if (this.setOnlyCountdownBtn) {
+          this.setOnlyCountdownBtn.addEventListener('click', () => {
+            this.applyCustomCountdownFromInputs(false);
+            this.closeCountdownModal();
+          });
+        }
+
+        // Live Real-Time Clamping & Typing Fix (Max 24 Hours, Max 60 Mins, Max 60 Secs)
+        const clampInput = (inputEl, minVal, maxVal) => {
+          if (!inputEl) return;
+          inputEl.addEventListener('input', () => {
+            if (inputEl.value === '') return; // Allow user to backspace and type freely!
+            let val = parseInt(inputEl.value, 10);
+            if (!isNaN(val) && val > maxVal) {
+              inputEl.value = maxVal;
+            }
+          });
+
+          inputEl.addEventListener('blur', () => {
+            let val = parseInt(inputEl.value, 10);
+            if (isNaN(val) || val < minVal) val = minVal;
+            if (val > maxVal) val = maxVal;
+            inputEl.value = val;
+          });
+        };
+
+        clampInput(this.cdHoursInput, 0, 24);
+        clampInput(this.cdMinsInput, 0, 60);
+        clampInput(this.cdSecsInput, 0, 60);
+
+        this.renderCountdown();
+
+        // World Clock Setup
+        this.updateWorldClock();
+        setInterval(() => this.updateWorldClock(), 10000);
+      }
+
+      openCountdownModal(target = 'countdown') {
+        if (!this.countdownModalOverlay) return;
+        this.editingTarget = target;
+
+        const titleEl = document.querySelector('#countdown-modal-overlay .modal-title');
+        const total = target === 'pomodoro' ? this.pomodoroTotalSec : this.countdownTotalSec;
+
+        if (titleEl) {
+          titleEl.innerHTML = target === 'pomodoro' ? '<span>⏱️</span> Set Focus Timer' : '<span>⏳</span> Set Countdown Timer';
+        }
+
+        const h = Math.floor(total / 3600);
+        const m = Math.floor((total % 3600) / 60);
+        const s = total % 60;
+
+        if (this.cdHoursInput) this.cdHoursInput.value = h;
+        if (this.cdMinsInput) this.cdMinsInput.value = m;
+        if (this.cdSecsInput) this.cdSecsInput.value = s;
+
+        this.countdownModalOverlay.classList.add('active');
+      }
+
+      closeCountdownModal() {
+        if (this.countdownModalOverlay) this.countdownModalOverlay.classList.remove('active');
+      }
+
+      applyCustomCountdownFromInputs(startImmediately = false) {
+        let h = parseInt(this.cdHoursInput ? this.cdHoursInput.value : 0, 10) || 0;
+        let m = parseInt(this.cdMinsInput ? this.cdMinsInput.value : 0, 10) || 0;
+        let s = parseInt(this.cdSecsInput ? this.cdSecsInput.value : 0, 10) || 0;
+
+        h = Math.min(Math.max(h, 0), 24);
+        m = Math.min(Math.max(m, 0), 60);
+        s = Math.min(Math.max(s, 0), 60);
+
+        let totalSec = (h * 3600) + (m * 60) + s;
+        if (totalSec > 86400) totalSec = 86400; // Max 24 hours
+        if (totalSec <= 0) totalSec = 60;
+
+        if (this.editingTarget === 'pomodoro') {
+          this.setPomodoroDuration(totalSec);
+          if (startImmediately && !this.pomodoroRunning) this.togglePomodoro();
+        } else {
+          this.setCountdownDuration(totalSec);
+          if (startImmediately && !this.countdownRunning) this.toggleCountdown();
+        }
+      }
+
+      setPomodoroDuration(sec) {
+        clearInterval(this.pomodoroInterval);
+        this.pomodoroRunning = false;
+        if (this.pomodoroToggleBtn) this.pomodoroToggleBtn.textContent = 'Start';
+
+        this.pomodoroTotalSec = sec;
+        this.pomodoroTimeLeft = sec;
+        state.pomodoroDurationSec = sec;
+        saveState();
+        this.renderPomodoro();
+      }
+
+      setCountdownDuration(sec) {
+        clearInterval(this.countdownInterval);
+        this.countdownRunning = false;
+        if (this.countdownWidgetEl) this.countdownWidgetEl.classList.remove('finished');
+        if (this.countdownToggleBtn) this.countdownToggleBtn.textContent = 'Start';
+
+        this.countdownTotalSec = sec;
+        this.countdownTimeLeft = sec;
+        state.countdownDurationSec = sec;
+        saveState();
+        this.renderCountdown();
+      }
+
+      toggleCountdown() {
+        if (this.countdownWidgetEl) this.countdownWidgetEl.classList.remove('finished');
+        if (this.countdownRunning) {
+          clearInterval(this.countdownInterval);
+          this.countdownRunning = false;
+          this.countdownToggleBtn.textContent = 'Start';
+        } else {
+          if (this.countdownTimeLeft <= 0) {
+            this.countdownTimeLeft = this.countdownTotalSec;
+          }
+          this.countdownRunning = true;
+          this.countdownToggleBtn.textContent = 'Pause';
+          this.countdownInterval = setInterval(() => {
+            if (this.countdownTimeLeft > 0) {
+              this.countdownTimeLeft--;
+              this.renderCountdown();
+            } else {
+              clearInterval(this.countdownInterval);
+              this.countdownRunning = false;
+              this.countdownToggleBtn.textContent = 'Start';
+              if (this.countdownWidgetEl) this.countdownWidgetEl.classList.add('finished');
+              this.playCountdownFinishedChime();
+            }
+          }, 1000);
+        }
+      }
+
+      resetCountdown() {
+        clearInterval(this.countdownInterval);
+        this.countdownRunning = false;
+        if (this.countdownWidgetEl) this.countdownWidgetEl.classList.remove('finished');
+        this.countdownTimeLeft = this.countdownTotalSec;
+        if (this.countdownToggleBtn) this.countdownToggleBtn.textContent = 'Start';
+        this.renderCountdown();
+      }
+
+      renderCountdown() {
+        if (!this.countdownTimerEl) return;
+        const total = this.countdownTimeLeft;
+        const hours = Math.floor(total / 3600);
+        const mins = Math.floor((total % 3600) / 60);
+        const secs = total % 60;
+
+        const hStr = String(hours).padStart(2, '0');
+        const mStr = String(mins).padStart(2, '0');
+        const sStr = String(secs).padStart(2, '0');
+
+        if (hours > 0) {
+          this.countdownTimerEl.textContent = `${hStr}:${mStr}:${sStr}`;
+        } else {
+          this.countdownTimerEl.textContent = `${mStr}:${sStr}`;
+        }
+      }
+
+      playCountdownFinishedChime() {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContext) return;
+          const ctx = new AudioContext();
+          const now = ctx.currentTime;
+
+          const playNote = (freq, startTime, duration) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0.35, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+          };
+
+          playNote(659.25, now, 0.4);       // E5
+          playNote(783.99, now + 0.2, 0.4); // G5
+          playNote(1046.50, now + 0.4, 0.8);// C6
+        } catch (e) {
+          console.log('Audio playback constrained');
+        }
+      }
+
+      updateWorldClock() {
+        if (!this.worldClockTimesEl) return;
+
+        const cities = state.worldCities || ['America/New_York', 'Europe/London', 'Asia/Tokyo'];
+        const now = new Date();
+
+        const formattedTimes = cities.map(timeZone => {
+          try {
+            const timeStr = now.toLocaleTimeString('en-US', {
+              timeZone,
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: !state.is24Hour
+            });
+            const parts = timeZone.split('/');
+            const cityName = parts[1] ? parts[1].replace('_', ' ') : timeZone;
+            const cityCode = cityName.substring(0, 3).toUpperCase();
+            return `<span><strong>${cityCode}</strong> ${timeStr}</span>`;
+          } catch(e) {
+            return '';
+          }
+        }).filter(Boolean);
+
+        this.worldClockTimesEl.innerHTML = formattedTimes.join('<span style="opacity: 0.35; margin: 0 0.15rem;">|</span>');
+      }
+
+      nextQuote() {
+        this.quoteIndex = (this.quoteIndex + 1) % QUOTES.length;
+        const q = QUOTES[this.quoteIndex];
+        this.quoteTextEl.textContent = `"${q.quote}"`;
+        this.quoteAuthorEl.textContent = `— ${q.author}`;
+      }
+
+      async fetchLiveWeather(city) {
+        if (!city || city.trim() === '') city = 'San Francisco';
+        
+        if (this.weatherTempEl) this.weatherTempEl.textContent = '...';
+        
+        try {
+          const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city.trim())}&count=1&language=en&format=json`;
+          const geoRes = await fetch(geoUrl);
+          const geoData = await geoRes.json();
+
+          if (!geoData.results || geoData.results.length === 0) {
+            if (this.weatherCityEl) this.weatherCityEl.textContent = city;
+            if (this.weatherTempEl) this.weatherTempEl.textContent = 'N/A';
+            return;
+          }
+
+          const location = geoData.results[0];
+          const lat = location.latitude;
+          const lon = location.longitude;
+          const displayName = location.name;
+
+          const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+          const weatherRes = await fetch(weatherUrl);
+          const weatherData = await weatherRes.json();
+
+          if (!weatherData.current_weather) {
+            if (this.weatherTempEl) this.weatherTempEl.textContent = 'N/A';
+            return;
+          }
+
+          const { temperature, weathercode } = weatherData.current_weather;
+          
+          let finalTemp = temperature;
+          let unitSymbol = '°C';
+          if (state.weatherUnit === 'F') {
+            finalTemp = (temperature * 9 / 5) + 32;
+            unitSymbol = '°F';
+          }
+
+          const roundedTemp = Math.round(finalTemp);
+          const weatherInfo = this.getWeatherInfoFromCode(weathercode);
+
+          if (this.weatherIconEl) this.weatherIconEl.textContent = weatherInfo.icon;
+          if (this.weatherTempEl) this.weatherTempEl.textContent = `${roundedTemp}${unitSymbol}`;
+          if (this.weatherCityEl) this.weatherCityEl.textContent = displayName;
+
+        } catch (err) {
+          console.warn('Weather fetch error:', err);
+          if (this.weatherTempEl) this.weatherTempEl.textContent = 'Offline';
+        }
+      }
+
+      async fetchLiveWeatherByCoords(lat, lon) {
+        if (this.weatherTempEl) this.weatherTempEl.textContent = '...';
+        try {
+          const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+          const weatherRes = await fetch(weatherUrl);
+          const weatherData = await weatherRes.json();
+
+          if (!weatherData.current_weather) {
+            if (this.weatherTempEl) this.weatherTempEl.textContent = 'N/A';
+            return;
+          }
+
+          const { temperature, weathercode } = weatherData.current_weather;
+          let finalTemp = temperature;
+          let unitSymbol = '°C';
+          if (state.weatherUnit === 'F') {
+            finalTemp = (temperature * 9 / 5) + 32;
+            unitSymbol = '°F';
+          }
+
+          const roundedTemp = Math.round(finalTemp);
+          const weatherInfo = this.getWeatherInfoFromCode(weathercode);
+
+          let cityName = 'Local Area';
+          try {
+            const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+            const geoData = await geoRes.json();
+            cityName = geoData.city || geoData.locality || geoData.principalSubdivision || 'Local Area';
+          } catch(e) {}
+
+          state.weatherCity = cityName;
+          saveState();
+
+          if (this.weatherIconEl) this.weatherIconEl.textContent = weatherInfo.icon;
+          if (this.weatherTempEl) this.weatherTempEl.textContent = `${roundedTemp}${unitSymbol}`;
+          if (this.weatherCityEl) this.weatherCityEl.textContent = cityName;
+          const cityInput = document.getElementById('weather-city-input');
+          if (cityInput) cityInput.value = cityName;
+
+        } catch(e) {
+          console.warn('Geolocation weather error:', e);
+        }
+      }
+
+      getWeatherInfoFromCode(code) {
+        if (code === 0) return { icon: '☀️', text: 'Clear Sky' };
+        if (code >= 1 && code <= 3) return { icon: '🌤️', text: 'Partly Cloudy' };
+        if (code === 45 || code === 48) return { icon: '🌫️', text: 'Foggy' };
+        if (code >= 51 && code <= 55) return { icon: '🌧️', text: 'Drizzle' };
+        if (code >= 61 && code <= 65) return { icon: '🌧️', text: 'Rain' };
+        if (code >= 71 && code <= 77) return { icon: '❄️', text: 'Snow' };
+        if (code >= 80 && code <= 82) return { icon: '🌦️', text: 'Showers' };
+        if (code >= 95) return { icon: '🌩️', text: 'Thunderstorm' };
+        return { icon: '🌤️', text: 'Fair' };
+      }
+
+      autoDetectWeatherLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              this.fetchLiveWeatherByCoords(pos.coords.latitude, pos.coords.longitude);
+            },
+            (err) => {
+              console.log('Automatic location fallback to stored city:', err.message);
+              this.fetchLiveWeather(state.weatherCity || 'San Francisco');
+            },
+            { timeout: 8000, maximumAge: 600000 }
+          );
+        } else {
+          this.fetchLiveWeather(state.weatherCity || 'San Francisco');
+        }
+      }
+
+      updateWeatherDisplay() {
+        this.autoDetectWeatherLocation();
+      }
+
+      togglePomodoro() {
+        if (this.pomodoroRunning) {
+          clearInterval(this.pomodoroInterval);
+          this.pomodoroRunning = false;
+          this.pomodoroToggleBtn.textContent = 'Start';
+        } else {
+          this.pomodoroRunning = true;
+          this.pomodoroToggleBtn.textContent = 'Pause';
+          this.pomodoroInterval = setInterval(() => {
+            if (this.pomodoroTimeLeft > 0) {
+              this.pomodoroTimeLeft--;
+              this.renderPomodoro();
+            } else {
+              clearInterval(this.pomodoroInterval);
+              this.pomodoroRunning = false;
+              this.pomodoroToggleBtn.textContent = 'Start';
+              this.playChimeSound();
+            }
+          }, 1000);
+        }
+      }
+
+      resetPomodoro() {
+        clearInterval(this.pomodoroInterval);
+        this.pomodoroRunning = false;
+        this.pomodoroTimeLeft = 25 * 60;
+        this.pomodoroToggleBtn.textContent = 'Start';
+        this.renderPomodoro();
+      }
+
+      renderPomodoro() {
+        const mins = String(Math.floor(this.pomodoroTimeLeft / 60)).padStart(2, '0');
+        const secs = String(this.pomodoroTimeLeft % 60).padStart(2, '0');
+        this.pomodoroTimerEl.textContent = `${mins}:${secs}`;
+      }
+
+      // Web Audio Synthesized Chime (No external audio file needed!)
+      playChimeSound() {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContext) return;
+          const ctx = new AudioContext();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5 note
+          osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.3); // E5 note
+
+          gain.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 1.2);
+        } catch (e) {
+          console.log('Audio playback constrained');
+        }
+      }
+
+      updateVisibility() {
+        document.getElementById('quote-widget').style.display = state.showQuote ? 'flex' : 'none';
+        document.getElementById('weather-widget').style.display = state.showWeather ? 'flex' : 'none';
+        document.getElementById('pomodoro-widget').style.display = state.showPomodoro ? 'flex' : 'none';
+        const countdownWidget = document.getElementById('countdown-widget');
+        if (countdownWidget) countdownWidget.style.display = state.showCountdown !== false ? 'flex' : 'none';
+        const soundWidget = document.getElementById('soundscape-widget');
+        if (soundWidget) soundWidget.style.display = state.showSoundscape !== false ? 'flex' : 'none';
+        const worldWidget = document.getElementById('worldclock-widget');
+        if (worldWidget) worldWidget.style.display = state.showWorldClock !== false ? 'flex' : 'none';
+        const adsenseBanner = document.getElementById('adsense-banner');
+        if (adsenseBanner) adsenseBanner.style.display = 'block';
+        this.updateWorldClock();
+      }
+    }
+
+    /* ==========================================================================
+       SCREENSAVER & IDLE TIMEOUT MANAGER
+       ========================================================================== */
+    class ScreensaverManager {
+      constructor() {
+        this.overlayEl = document.getElementById('screensaver-overlay');
+        this.containerEl = document.getElementById('screensaver-clock-container');
+        this.timeEl = document.getElementById('screensaver-time');
+        this.secondsEl = document.getElementById('screensaver-seconds');
+        this.ampmEl = document.getElementById('screensaver-ampm');
+        this.heroClockEl = document.getElementById('screensaver-hero-clock');
+        this.dateEl = document.getElementById('screensaver-date');
+        this.isActive = false;
+        this.idleTimer = null;
+        this.driftInterval = null;
+
+        this.init();
+      }
+
+      init() {
+        // Activity listeners to reset idle timer and exit screensaver
+        const events = ['mousemove', 'mousedown', 'keydown', 'touchstart'];
+        events.forEach(event => {
+          window.addEventListener(event, () => this.handleUserActivity());
+        });
+
+        this.resetIdleTimer();
+        this.applyScreensaverStyles();
+      }
+
+      applyScreensaverStyles() {
+        if (!this.containerEl) return;
+
+        // Size Class
+        this.containerEl.className = `screensaver-size-${state.screensaverFontSize || 'medium'}`;
+
+        // Date Display
+        if (state.screensaverShowDate) {
+          this.dateEl.style.display = 'block';
+        } else {
+          this.dateEl.style.display = 'none';
+        }
+
+        // Color Mode & Glow Shadow
+        const colorMode = state.screensaverColorMode || 'dim-white';
+        let colorVal = 'rgba(255, 255, 255, 0.45)';
+        let shadowVal = '0 0 25px rgba(255, 255, 255, 0.15)';
+
+        switch (colorMode) {
+          case 'bright-white':
+            colorVal = '#ffffff';
+            shadowVal = '0 0 35px rgba(255, 255, 255, 0.8)';
+            break;
+          case 'neon-cyan':
+            colorVal = '#38bdf8';
+            shadowVal = '0 0 30px rgba(56, 189, 248, 0.45)';
+            break;
+          case 'emerald':
+            colorVal = '#34d399';
+            shadowVal = '0 0 30px rgba(52, 211, 153, 0.45)';
+            break;
+          case 'hot-pink':
+            colorVal = '#ff007f';
+            shadowVal = '0 0 30px rgba(255, 0, 127, 0.45)';
+            break;
+          case 'amber':
+            colorVal = '#fbbf24';
+            shadowVal = '0 0 30px rgba(251, 191, 36, 0.45)';
+            break;
+          case 'sunset':
+            colorVal = '#f87171';
+            shadowVal = '0 0 30px rgba(248, 113, 113, 0.45)';
+            break;
+          case 'theme-accent':
+            colorVal = 'var(--accent-color)';
+            shadowVal = '0 0 30px var(--accent-glow)';
+            break;
+          case 'custom':
+            colorVal = state.screensaverCustomColor || '#38bdf8';
+            shadowVal = `0 0 30px ${colorVal}`;
+            break;
+          default: // dim-white
+            colorVal = 'rgba(255, 255, 255, 0.45)';
+            shadowVal = '0 0 25px rgba(255, 255, 255, 0.15)';
+            break;
+        }
+
+        this.heroClockEl.style.color = colorVal;
+        this.heroClockEl.style.textShadow = shadowVal;
+        this.dateEl.style.color = colorVal;
+        this.dateEl.style.textShadow = shadowVal;
+      }
+
+      resetIdleTimer() {
+        clearTimeout(this.idleTimer);
+        if (state.screensaverTimeout > 0 && !this.isActive) {
+          const timeoutMs = state.screensaverTimeout * 60 * 1000;
+          this.idleTimer = setTimeout(() => this.startScreensaver(), timeoutMs);
+        }
+      }
+
+      handleUserActivity() {
+        if (this.isActive) {
+          this.exitScreensaver();
+        }
+        this.resetIdleTimer();
+      }
+
+      startScreensaver() {
+        this.isActive = true;
+        this.overlayEl.classList.add('active');
+        document.body.classList.add('screensaver-active');
+        this.applyScreensaverStyles();
+        this.updateScreensaverClock();
+
+        // Reset transform to exact center
+        this.containerEl.style.transform = 'translate(0px, 0px)';
+
+        // Apply subtle micro-drift around center every 30 seconds to prevent OLED burn-in
+        this.driftInterval = setInterval(() => this.driftClockPosition(), 30000);
+      }
+
+      exitScreensaver() {
+        this.isActive = false;
+        this.overlayEl.classList.remove('active');
+        document.body.classList.remove('screensaver-active');
+        clearInterval(this.driftInterval);
+        this.resetIdleTimer();
+      }
+
+      driftClockPosition() {
+        // Keeps clock centered while shifting ±30px around center to protect OLED screen
+        const offsetX = (Math.random() - 0.5) * 60;
+        const offsetY = (Math.random() - 0.5) * 60;
+        this.containerEl.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+      }
+
+      updateScreensaverClock() {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        let ampm = '';
+
+        if (!state.is24Hour) {
+          ampm = hours >= 12 ? 'PM' : 'AM';
+          hours = hours % 12 || 12;
+        }
+
+        const formattedHours = String(hours).padStart(state.is24Hour ? 2 : 1, '0');
+        this.timeEl.textContent = `${formattedHours}:${minutes}`;
+
+        // Seconds Visibility
+        if (state.showSeconds) {
+          this.secondsEl.style.display = 'inline';
+          this.secondsEl.textContent = seconds;
+        } else {
+          this.secondsEl.style.display = 'none';
+        }
+
+        // AM/PM Badge Visibility
+        if (!state.is24Hour && state.screensaverShowAmPm !== false) {
+          this.ampmEl.style.display = 'inline-block';
+          this.ampmEl.textContent = ampm;
+        } else {
+          this.ampmEl.style.display = 'none';
+        }
+
+        // Date Display
+        if (state.screensaverShowDate) {
+          const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+          this.dateEl.style.display = 'block';
+          this.dateEl.textContent = now.toLocaleDateString(undefined, options);
+        } else {
+          this.dateEl.style.display = 'none';
+        }
+
+        if (this.isActive) {
+          setTimeout(() => this.updateScreensaverClock(), 1000);
+        }
+      }
+    }
+
+    /* ==========================================================================
+       IDLE UI CONTROLLER (AUTOHIDE CORNER CONTROLS AFTER 4 SECONDS)
+       ========================================================================== */
+    class IdleUIController {
+      constructor() {
+        this.controlsEl = document.getElementById('corner-controls');
+        this.idleTimeout = null;
+
+        this.init();
+      }
+
+      init() {
+        const events = ['mousemove', 'mousedown', 'keydown', 'touchstart'];
+        events.forEach(event => {
+          window.addEventListener(event, () => this.onActivity());
+        });
+        this.startTimer();
+      }
+
+      onActivity() {
+        this.controlsEl.classList.remove('idle-hidden');
+        this.startTimer();
+      }
+
+      startTimer() {
+        clearTimeout(this.idleTimeout);
+        this.idleTimeout = setTimeout(() => {
+          this.controlsEl.classList.add('idle-hidden');
+        }, 4000);
+      }
+    }
+
+    /* ==========================================================================
+       WEB AUDIO AMBIENT SOUND GENERATOR (PREMIUM)
+       ========================================================================== */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.currentSound = 'off';
+        this.gainNode = null;
+        this.noiseNode = null;
+        this.filterNode = null;
+        this.lfoNode = null;
+      }
+
+      initContext() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      stopSound() {
+        if (this.noiseNode) {
+          try { this.noiseNode.stop(); } catch(e){}
+          this.noiseNode.disconnect();
+          this.noiseNode = null;
+        }
+        if (this.lfoNode) {
+          try { this.lfoNode.stop(); } catch(e){}
+          this.lfoNode.disconnect();
+          this.lfoNode = null;
+        }
+        this.currentSound = 'off';
+      }
+
+      createWhiteNoiseBuffer() {
+        const bufferSize = 2 * this.ctx.sampleRate;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const output = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+        return buffer;
+      }
+
+      playSound(type, volume = 0.5) {
+        this.initContext();
+        this.stopSound();
+
+        if (type === 'off') return;
+
+        this.gainNode = this.ctx.createGain();
+        this.gainNode.gain.setValueAtTime(volume * 0.3, this.ctx.currentTime);
+
+        const noiseBuffer = this.createWhiteNoiseBuffer();
+        this.noiseNode = this.ctx.createBufferSource();
+        this.noiseNode.buffer = noiseBuffer;
+        this.noiseNode.loop = true;
+
+        if (type === 'rain') {
+          this.filterNode = this.ctx.createBiquadFilter();
+          this.filterNode.type = 'lowpass';
+          this.filterNode.frequency.setValueAtTime(900, this.ctx.currentTime);
+
+          this.noiseNode.connect(this.filterNode);
+          this.filterNode.connect(this.gainNode);
+        } else if (type === 'ocean') {
+          this.filterNode = this.ctx.createBiquadFilter();
+          this.filterNode.type = 'lowpass';
+          this.filterNode.frequency.setValueAtTime(400, this.ctx.currentTime);
+
+          this.lfoNode = this.ctx.createOscillator();
+          this.lfoNode.frequency.setValueAtTime(0.1, this.ctx.currentTime);
+          const lfoGain = this.ctx.createGain();
+          lfoGain.gain.setValueAtTime(300, this.ctx.currentTime);
+
+          this.lfoNode.connect(lfoGain);
+          lfoGain.connect(this.filterNode.frequency);
+          this.lfoNode.start();
+
+          this.noiseNode.connect(this.filterNode);
+          this.filterNode.connect(this.gainNode);
+        } else if (type === 'pink') {
+          this.filterNode = this.ctx.createBiquadFilter();
+          this.filterNode.type = 'lowpass';
+          this.filterNode.frequency.setValueAtTime(400, this.ctx.currentTime);
+
+          this.noiseNode.connect(this.filterNode);
+          this.filterNode.connect(this.gainNode);
+        }
+
+        this.gainNode.connect(this.ctx.destination);
+        this.noiseNode.start();
+        this.currentSound = type;
+      }
+
+      setVolume(vol) {
+        if (this.gainNode && this.ctx) {
+          this.gainNode.gain.setValueAtTime(vol * 0.3, this.ctx.currentTime);
+        }
+      }
+    }
+
+    /* ==========================================================================
+       PREMIUM SUBSCRIPTION & PAYWALL UI
+       ========================================================================== */
+    class SubscriptionManager {
+      constructor() {
+        this.modalOverlay = document.getElementById('premium-modal-overlay');
+        this.closeBtn = document.getElementById('close-premium-modal-btn');
+        this.activateBtn = document.getElementById('activate-subscription-btn');
+        this.pricingCards = document.querySelectorAll('.pricing-card');
+        this.statusBadge = document.getElementById('premium-status-badge');
+        this.selectedPlan = '1y';
+
+        this.init();
+      }
+
+      init() {
+        if (this.closeBtn) {
+          this.closeBtn.addEventListener('click', () => this.closeModal());
+        }
+        if (this.modalOverlay) {
+          this.modalOverlay.addEventListener('click', (e) => {
+            if (e.target === this.modalOverlay) this.closeModal();
+          });
+        }
+
+        this.pricingCards.forEach(card => {
+          card.addEventListener('click', () => {
+            this.pricingCards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            this.selectedPlan = card.dataset.plan;
+          });
+        });
+
+        if (this.activateBtn) {
+          this.activateBtn.addEventListener('click', () => this.activateSubscription());
+        }
+
+        this.updateLockStates();
+      }
+
+      openModal() {
+        if (this.modalOverlay) this.modalOverlay.classList.add('active');
+      }
+
+      closeModal() {
+        if (this.modalOverlay) this.modalOverlay.classList.remove('active');
+      }
+
+      activateSubscription() {
+        state.isPremium = true;
+        state.subscriptionPlan = this.selectedPlan;
+        saveState();
+        this.updateLockStates();
+        this.closeModal();
+        const planName = this.selectedPlan === '1y' ? '1 Year (₹450)' : this.selectedPlan === '6m' ? '6 Months (₹250)' : '3 Months (₹150)';
+        alert(`🎉 Subscription Activated!\n\nYou're now subscribed to Ambient Premium on the ${planName} plan. All 4 aesthetic themes & soundscapes are unlocked!`);
+      }
+
+      updateLockStates() {
+        const lockedCards = document.querySelectorAll('#premium-themes-grid .theme-card, .font-card[data-premium="true"]');
+        if (state.isPremium) {
+          if (this.statusBadge) {
+            this.statusBadge.textContent = '✨ PREMIUM ACTIVE';
+            this.statusBadge.style.background = 'linear-gradient(135deg, #10b981, #3b82f6)';
+          }
+          lockedCards.forEach(card => {
+            card.classList.remove('locked');
+          });
+        } else {
+          if (this.statusBadge) {
+            this.statusBadge.textContent = 'PRICING PLANS';
+            this.statusBadge.style.background = 'linear-gradient(135deg, #f59e0b, #ec4899)';
+          }
+          lockedCards.forEach(card => {
+            card.classList.add('locked');
+          });
+        }
+      }
+    }
+
+    /* ==========================================================================
+       SETTINGS MODAL & CONTROLS BINDING
+       ========================================================================== */
+    class SettingsUI {
+      constructor(canvasEngine, widgetManager, screensaverManager, soundEngine, subscriptionManager) {
+        this.canvasEngine = canvasEngine;
+        this.widgetManager = widgetManager;
+        this.screensaverManager = screensaverManager;
+        this.soundEngine = soundEngine;
+        this.subscriptionManager = subscriptionManager;
+
+        this.overlay = document.getElementById('settings-overlay');
+        this.openBtn = document.getElementById('settings-btn');
+        this.closeBtn = document.getElementById('close-modal-btn');
+        this.quickScreensaverBtn = document.getElementById('quick-screensaver-btn');
+        this.nightstandBtn = document.getElementById('nightstand-btn');
+        this.toggleNightstand = document.getElementById('toggle-nightstand-mode');
+        this.fullscreenBtn = document.getElementById('fullscreen-btn');
+
+        this.toggle24h = document.getElementById('toggle-24h');
+        this.toggleSeconds = document.getElementById('toggle-seconds');
+        this.toggleQuote = document.getElementById('toggle-quote-widget');
+        this.toggleWeather = document.getElementById('toggle-weather-widget');
+        this.weatherCityInput = document.getElementById('weather-city-input');
+        this.weatherUnitSelect = document.getElementById('weather-unit-select');
+        this.togglePomodoro = document.getElementById('toggle-pomodoro-widget');
+        this.toggleCountdown = document.getElementById('toggle-countdown-widget');
+        this.toggleSoundscape = document.getElementById('toggle-soundscape-widget');
+        this.toggleWorldClock = document.getElementById('toggle-worldclock-widget');
+        this.worldCity1 = document.getElementById('world-city-1');
+        this.worldCity2 = document.getElementById('world-city-2');
+        this.worldCity3 = document.getElementById('world-city-3');
+        this.screensaverTimeoutSelect = document.getElementById('screensaver-timeout-select');
+        this.toggleScreensaverDate = document.getElementById('toggle-screensaver-date');
+        this.toggleScreensaverAmPm = document.getElementById('toggle-screensaver-ampm');
+        this.screensaverSizeSelect = document.getElementById('screensaver-size-select');
+        this.screensaverColorSelect = document.getElementById('screensaver-color-select');
+        this.screensaverCustomColorPicker = document.getElementById('screensaver-custom-color-picker');
+        this.screensaverCustomColorRow = document.getElementById('screensaver-custom-color-row');
+        this.startScreensaverBtn = document.getElementById('start-screensaver-btn');
+
+        this.soundSelect = document.getElementById('soundscape-select');
+        this.soundVolume = document.getElementById('soundscape-volume');
+
+        if (this.toggleScreensaverDate) {
+          this.toggleScreensaverDate.addEventListener('change', (e) => {
+            state.screensaverShowDate = e.target.checked;
+            this.screensaverManager.applyScreensaverStyles();
+            saveState();
+          });
+        }
+
+        if (this.toggleScreensaverAmPm) {
+          this.toggleScreensaverAmPm.addEventListener('change', (e) => {
+            state.screensaverShowAmPm = e.target.checked;
+            this.screensaverManager.applyScreensaverStyles();
+            saveState();
+          });
+        }
+
+        if (this.screensaverSizeSelect) {
+          this.screensaverSizeSelect.addEventListener('change', (e) => {
+            state.screensaverFontSize = e.target.value;
+            this.screensaverManager.applyScreensaverStyles();
+            saveState();
+          });
+        }
+
+        if (this.screensaverColorSelect) {
+          this.screensaverColorSelect.addEventListener('change', (e) => {
+            state.screensaverColorMode = e.target.value;
+            if (this.screensaverCustomColorRow) {
+              this.screensaverCustomColorRow.style.display = e.target.value === 'custom' ? 'flex' : 'none';
+            }
+            this.screensaverManager.applyScreensaverStyles();
+            saveState();
+          });
+        }
+
+        if (this.screensaverCustomColorPicker) {
+          this.screensaverCustomColorPicker.addEventListener('input', (e) => {
+            state.screensaverCustomColor = e.target.value;
+            this.screensaverManager.applyScreensaverStyles();
+            saveState();
+          });
+        }
+
+        this.init();
+      }
+
+      init() {
+        // Modal toggles
+        if (this.openBtn) this.openBtn.addEventListener('click', () => this.openModal());
+        if (this.closeBtn) this.closeBtn.addEventListener('click', () => this.closeModal());
+        if (this.overlay) {
+          this.overlay.addEventListener('click', (e) => {
+            if (e.target === this.overlay) this.closeModal();
+          });
+        }
+
+        // Nightstand / Sleep Mode controls
+        if (this.nightstandBtn) {
+          this.nightstandBtn.addEventListener('click', () => this.setNightstandMode(!state.isNightstand));
+        }
+        if (this.toggleNightstand) {
+          this.toggleNightstand.addEventListener('change', (e) => this.setNightstandMode(e.target.checked));
+        }
+
+        // Quick Screensaver button
+        if (this.quickScreensaverBtn) {
+          this.quickScreensaverBtn.addEventListener('click', () => this.screensaverManager.startScreensaver());
+        }
+
+        // Fullscreen toggle
+        if (this.fullscreenBtn) {
+          this.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+        }
+
+        // Keyboard Shortcuts
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            this.closeModal();
+            if (this.subscriptionManager) this.subscriptionManager.closeModal();
+            if (this.widgetManager) this.widgetManager.closeCountdownModal();
+            this.screensaverManager.exitScreensaver();
+          } else if ((e.key === 's' || e.key === 'S') && document.activeElement.tagName !== 'INPUT') {
+            this.openModal();
+          } else if ((e.key === 'f' || e.key === 'F') && document.activeElement.tagName !== 'INPUT') {
+            this.toggleFullscreen();
+          } else if ((e.key === 'z' || e.key === 'Z') && document.activeElement.tagName !== 'INPUT') {
+            this.screensaverManager.startScreensaver();
+          } else if ((e.key === 'n' || e.key === 'N') && document.activeElement.tagName !== 'INPUT') {
+            this.setNightstandMode(!state.isNightstand);
+          }
+        });
+
+        // Theme Cards Selection (Supports Animated, Solid, and Locked Premium Cards)
+        const allThemeCards = document.querySelectorAll('.theme-card');
+        allThemeCards.forEach(card => {
+          card.addEventListener('click', () => {
+            const themeId = card.dataset.themeId;
+            if (themeId && themeId.startsWith('premium-') && !state.isPremium) {
+              if (this.subscriptionManager) this.subscriptionManager.openModal();
+              return;
+            }
+            allThemeCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            state.theme = themeId;
+            applyTheme(themeId);
+            this.canvasEngine.setupTheme(themeId);
+            saveState();
+          });
+        });
+
+        // Custom Solid Color Picker
+        const customPicker = document.getElementById('custom-color-picker');
+        const applyCustomBtn = document.getElementById('apply-custom-color-btn');
+
+        if (customPicker) {
+          const updateCustomColor = () => {
+            state.theme = 'solid-custom';
+            state.customSolidColor = customPicker.value;
+            allThemeCards.forEach(c => c.classList.remove('active'));
+            applyTheme('solid-custom');
+            this.canvasEngine.setupTheme('solid-custom');
+            saveState();
+          };
+
+          if (applyCustomBtn) applyCustomBtn.addEventListener('click', updateCustomColor);
+          customPicker.addEventListener('input', updateCustomColor);
+          customPicker.addEventListener('change', updateCustomColor);
+        }
+
+        // Soundscape Generator Controls
+        if (this.soundSelect) {
+          this.soundSelect.addEventListener('change', (e) => {
+            const sound = e.target.value;
+            if (sound !== 'off' && !state.isPremium) {
+              this.soundSelect.value = 'off';
+              if (this.subscriptionManager) this.subscriptionManager.openModal();
+              return;
+            }
+            state.activeSound = sound;
+            this.soundEngine.playSound(sound, state.soundVolume);
+            saveState();
+          });
+        }
+
+        if (this.soundVolume) {
+          this.soundVolume.addEventListener('input', (e) => {
+            const vol = parseFloat(e.target.value);
+            state.soundVolume = vol;
+            this.soundEngine.setVolume(vol);
+            saveState();
+          });
+        }
+
+        // Visual Font Specimen Card Selection
+        const allFontCards = document.querySelectorAll('.font-card');
+        allFontCards.forEach(card => {
+          card.addEventListener('click', () => {
+            const fontId = card.dataset.fontId;
+            const isPremiumFont = card.dataset.premium === 'true';
+
+            if (isPremiumFont && !state.isPremium) {
+              if (this.subscriptionManager) this.subscriptionManager.openModal();
+              return;
+            }
+
+            allFontCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            applyFont(fontId);
+          });
+        });
+
+        if (this.toggle24h) {
+          this.toggle24h.addEventListener('change', (e) => {
+            state.is24Hour = e.target.checked;
+            saveState();
+          });
+        }
+
+        if (this.toggleSeconds) {
+          this.toggleSeconds.addEventListener('change', (e) => {
+            state.showSeconds = e.target.checked;
+            saveState();
+          });
+        }
+
+        if (this.toggleQuote) {
+          this.toggleQuote.addEventListener('change', (e) => {
+            state.showQuote = e.target.checked;
+            this.widgetManager.updateVisibility();
+            saveState();
+          });
+        }
+
+        if (this.toggleWeather) {
+          this.toggleWeather.addEventListener('change', (e) => {
+            state.showWeather = e.target.checked;
+            this.widgetManager.updateVisibility();
+            saveState();
+          });
+        }
+
+        if (this.weatherCityInput) {
+          let weatherDebounce = null;
+          this.weatherCityInput.addEventListener('input', (e) => {
+            state.weatherCity = e.target.value;
+            saveState();
+            clearTimeout(weatherDebounce);
+            weatherDebounce = setTimeout(() => {
+              this.widgetManager.fetchLiveWeather(state.weatherCity);
+            }, 600);
+          });
+        }
+
+        const weatherLocateBtn = document.getElementById('weather-locate-btn');
+        if (weatherLocateBtn) {
+          weatherLocateBtn.addEventListener('click', () => {
+            if (navigator.geolocation) {
+              weatherLocateBtn.textContent = '⏳';
+              navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                  weatherLocateBtn.textContent = '📍';
+                  this.widgetManager.fetchLiveWeatherByCoords(pos.coords.latitude, pos.coords.longitude);
+                },
+                (err) => {
+                  weatherLocateBtn.textContent = '📍';
+                  alert('Unable to detect location. Please check browser location permissions or type your city manually.');
+                }
+              );
+            } else {
+              alert('Geolocation is not supported by your browser.');
+            }
+          });
+        }
+
+        if (this.weatherUnitSelect) {
+          this.weatherUnitSelect.addEventListener('change', (e) => {
+            state.weatherUnit = e.target.value;
+            this.widgetManager.updateWeatherDisplay();
+            saveState();
+          });
+        }
+
+        if (this.togglePomodoro) {
+          this.togglePomodoro.addEventListener('change', (e) => {
+            state.showPomodoro = e.target.checked;
+            this.widgetManager.updateVisibility();
+            saveState();
+          });
+        }
+
+        if (this.toggleCountdown) {
+          this.toggleCountdown.addEventListener('change', (e) => {
+            state.showCountdown = e.target.checked;
+            this.widgetManager.updateVisibility();
+            saveState();
+          });
+        }
+
+        if (this.toggleSoundscape) {
+          this.toggleSoundscape.addEventListener('change', (e) => {
+            state.showSoundscape = e.target.checked;
+            this.widgetManager.updateVisibility();
+            saveState();
+          });
+        }
+
+        if (this.toggleWorldClock) {
+          this.toggleWorldClock.addEventListener('change', (e) => {
+            state.showWorldClock = e.target.checked;
+            this.widgetManager.updateVisibility();
+            saveState();
+          });
+        }
+
+        const handleCityChange = () => {
+          if (this.worldCity1 && this.worldCity2 && this.worldCity3) {
+            state.worldCities = [this.worldCity1.value, this.worldCity2.value, this.worldCity3.value];
+            this.widgetManager.updateWorldClock();
+            saveState();
+          }
+        };
+
+        if (this.worldCity1) this.worldCity1.addEventListener('change', handleCityChange);
+        if (this.worldCity2) this.worldCity2.addEventListener('change', handleCityChange);
+        if (this.worldCity3) this.worldCity3.addEventListener('change', handleCityChange);
+
+        if (this.screensaverTimeoutSelect) {
+          this.screensaverTimeoutSelect.addEventListener('change', (e) => {
+            state.screensaverTimeout = parseFloat(e.target.value);
+            this.screensaverManager.resetIdleTimer();
+            saveState();
+          });
+        }
+
+        const resetDefaultsBtn = document.getElementById('reset-defaults-btn');
+        if (resetDefaultsBtn) {
+          resetDefaultsBtn.addEventListener('click', () => {
+            state = { ...DEFAULT_STATE };
+            saveState();
+            this.syncUIFromState();
+            this.canvasEngine.setupTheme(state.theme);
+          });
+        }
+
+        this.syncUIFromState();
+      }
+
+      syncUIFromState() {
+        applyTheme(state.theme);
+        
+        // Active Theme Card
+        const activeCard = document.querySelector(`.theme-card[data-theme-id="${state.theme}"]`);
+        document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
+        if (activeCard) {
+          activeCard.classList.add('active');
+        }
+
+        if (state.customSolidColor) {
+          const picker = document.getElementById('custom-color-picker');
+          if (picker) picker.value = state.customSolidColor;
+        }
+
+        if (this.soundSelect) this.soundSelect.value = state.activeSound || 'off';
+        if (this.soundVolume) this.soundVolume.value = state.soundVolume || 0.5;
+
+        applyFont(state.clockFont || 'Cinzel');
+        const activeFontCard = document.querySelector(`.font-card[data-font-id="${state.clockFont}"]`);
+        document.querySelectorAll('.font-card').forEach(c => c.classList.remove('active'));
+        if (activeFontCard) activeFontCard.classList.add('active');
+
+        this.toggle24h.checked = state.is24Hour;
+        this.toggleSeconds.checked = state.showSeconds;
+        this.toggleQuote.checked = state.showQuote;
+        this.toggleWeather.checked = state.showWeather;
+        this.weatherCityInput.value = state.weatherCity || 'San Francisco';
+        this.weatherUnitSelect.value = state.weatherUnit || 'F';
+        if (this.togglePomodoro) this.togglePomodoro.checked = state.showPomodoro;
+        if (this.toggleCountdown) this.toggleCountdown.checked = state.showCountdown !== false;
+        if (this.toggleSoundscape) this.toggleSoundscape.checked = state.showSoundscape !== false;
+        if (this.toggleWorldClock) this.toggleWorldClock.checked = state.showWorldClock !== false;
+        
+        const cities = state.worldCities || ['America/New_York', 'Europe/London', 'Asia/Tokyo'];
+        if (this.worldCity1) this.worldCity1.value = cities[0] || 'America/New_York';
+        if (this.worldCity2) this.worldCity2.value = cities[1] || 'Europe/London';
+        if (this.worldCity3) this.worldCity3.value = cities[2] || 'Asia/Tokyo';
+        this.screensaverTimeoutSelect.value = String(state.screensaverTimeout);
+        if (this.toggleScreensaverDate) this.toggleScreensaverDate.checked = !!state.screensaverShowDate;
+        if (this.toggleScreensaverAmPm) this.toggleScreensaverAmPm.checked = state.screensaverShowAmPm !== false;
+        if (this.screensaverSizeSelect) this.screensaverSizeSelect.value = state.screensaverFontSize || 'medium';
+        if (this.screensaverColorSelect) this.screensaverColorSelect.value = state.screensaverColorMode || 'dim-white';
+        if (this.screensaverCustomColorPicker) this.screensaverCustomColorPicker.value = state.screensaverCustomColor || '#38bdf8';
+        if (this.screensaverCustomColorRow) {
+          this.screensaverCustomColorRow.style.display = state.screensaverColorMode === 'custom' ? 'flex' : 'none';
+        }
+        this.screensaverManager.applyScreensaverStyles();
+
+        this.setNightstandMode(!!state.isNightstand);
+
+        this.widgetManager.updateVisibility();
+        this.subscriptionManager.updateLockStates();
+        
+        // Restore Sound if active
+        if (state.activeSound && state.activeSound !== 'off') {
+            this.soundEngine.playSound(state.activeSound, state.soundVolume);
+        }
+      }
+
+      setNightstandMode(enabled) {
+        state.isNightstand = !!enabled;
+        document.body.classList.toggle('nightstand-mode', state.isNightstand);
+        
+        if (this.nightstandBtn) {
+          this.nightstandBtn.classList.toggle('active', state.isNightstand);
+          this.nightstandBtn.title = state.isNightstand ? "Nightstand Mode ON (N)" : "Nightstand / Sleep Mode (N)";
+        }
+
+        if (this.toggleNightstand) {
+          this.toggleNightstand.checked = state.isNightstand;
+        }
+
+        if (this.canvasEngine) {
+          if (state.isNightstand) {
+            this.canvasEngine.pause();
+          } else {
+            this.canvasEngine.resume();
+          }
+        }
+
+        saveState();
+      }
+
+      openModal() {
+        this.overlay.classList.add('active');
+      }
+
+      closeModal() {
+        this.overlay.classList.remove('active');
+      }
+
+      toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => {
+            console.log(`Error attempting to enable fullscreen: ${err.message}`);
+          });
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      }
+    }
+
+    /* ==========================================================================
+       APP INITIALIZATION
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+
+      const canvasEngine = new CanvasEngine('ambient-canvas');
+      const soundEngine = new SoundEngine();
+      const subscriptionManager = new SubscriptionManager();
+      const clockManager = new ClockManager();
+      const widgetManager = new WidgetManager();
+      const screensaverManager = new ScreensaverManager();
+      const idleUIController = new IdleUIController();
+
+      new SettingsUI(canvasEngine, widgetManager, screensaverManager, soundEngine, subscriptionManager);
+    });
+  </script>
+</body>
+</html>
