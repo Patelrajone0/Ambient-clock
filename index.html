@@ -1806,7 +1806,7 @@
           <div class="setting-row">
             <div class="setting-label">Ambient Rotating Quote</div>
             <label class="switch">
-              <input type="checkbox" id="toggle-quote-widget" checked>
+              <input type="checkbox" id="toggle-quote-widget">
               <span class="slider"></span>
             </label>
           </div>
@@ -1814,7 +1814,7 @@
           <div class="setting-row">
             <div class="setting-label">Weather Chip Widget</div>
             <label class="switch">
-              <input type="checkbox" id="toggle-weather-widget" checked>
+              <input type="checkbox" id="toggle-weather-widget">
               <span class="slider"></span>
             </label>
           </div>
@@ -1837,7 +1837,7 @@
           <div class="setting-row">
             <div class="setting-label">Pomodoro / Focus Timer</div>
             <label class="switch">
-              <input type="checkbox" id="toggle-pomodoro-widget" checked>
+              <input type="checkbox" id="toggle-pomodoro-widget">
               <span class="slider"></span>
             </label>
           </div>
@@ -1845,7 +1845,7 @@
           <div class="setting-row">
             <div class="setting-label">Custom Countdown Timer</div>
             <label class="switch">
-              <input type="checkbox" id="toggle-countdown-widget" checked>
+              <input type="checkbox" id="toggle-countdown-widget">
               <span class="slider"></span>
             </label>
           </div>
@@ -1853,7 +1853,7 @@
           <div class="setting-row">
             <div class="setting-label">Ambient Soundscape Chip</div>
             <label class="switch">
-              <input type="checkbox" id="toggle-soundscape-widget" checked>
+              <input type="checkbox" id="toggle-soundscape-widget">
               <span class="slider"></span>
             </label>
           </div>
@@ -1861,7 +1861,7 @@
           <div class="setting-row">
             <div class="setting-label">World Clock Multi-Timezone</div>
             <label class="switch">
-              <input type="checkbox" id="toggle-worldclock-widget" checked>
+              <input type="checkbox" id="toggle-worldclock-widget">
               <span class="slider"></span>
             </label>
           </div>
@@ -2005,6 +2005,13 @@
               <span>🌙</span> Launch Screensaver Now
             </button>
           </div>
+        </div>
+
+        <!-- Reset All Settings Button -->
+        <div class="setting-group" style="margin-top: 0.5rem;">
+          <button class="action-btn secondary-btn" id="reset-defaults-btn" style="width: 100%; border-color: rgba(239, 68, 68, 0.4); color: #f87171;">
+            🔄 Turn Off All Settings & Reset to Clean Default
+          </button>
         </div>
 
         <!-- Google AdSense Banner Container (Inside Settings Drawer) -->
@@ -2155,14 +2162,14 @@
       is24Hour: false,
       showSeconds: true,
       isNightstand: false,
-      showQuote: true,
-      showWeather: true,
+      showQuote: false,
+      showWeather: false,
       weatherCity: 'San Francisco',
       weatherUnit: 'F',
-      showPomodoro: true,
-      showCountdown: true,
+      showPomodoro: false,
+      showCountdown: false,
       countdownDurationSec: 15 * 60, // 15 min default
-      showAdSense: true,
+      showAdSense: false,
       screensaverTimeout: 0, // 0 = Off by default on first run
       screensaverShowDate: false,
       screensaverShowAmPm: true,
@@ -2173,8 +2180,8 @@
       subscriptionPlan: null,
       activeSound: 'off',
       soundVolume: 0.5,
-      showSoundscape: true,
-      showWorldClock: true,
+      showSoundscape: false,
+      showWorldClock: false,
       worldCities: ['America/New_York', 'Europe/London', 'Asia/Tokyo']
     };
 
@@ -4300,10 +4307,13 @@
           });
         }
 
-        if (this.startScreensaverBtn) {
-          this.startScreensaverBtn.addEventListener('click', () => {
-            this.closeModal();
-            this.screensaverManager.startScreensaver();
+        const resetDefaultsBtn = document.getElementById('reset-defaults-btn');
+        if (resetDefaultsBtn) {
+          resetDefaultsBtn.addEventListener('click', () => {
+            state = { ...DEFAULT_STATE };
+            saveState();
+            this.syncUIFromState();
+            this.canvasEngine.setupTheme(state.theme);
           });
         }
 
