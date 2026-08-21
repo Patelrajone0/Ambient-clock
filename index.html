@@ -128,17 +128,28 @@
       --glass-hover: rgba(16, 185, 129, 0.4);
     }
 
-    /* SOLID THEME 1: Pitch Black */
+    /* SOLID THEME 1: Pitch Black (Pure AMOLED 100% #000000) */
     [data-theme="solid-black"] {
       --bg-color: #000000;
       --text-main: #ffffff;
-      --text-muted: rgba(255, 255, 255, 0.7);
-      --text-dim: rgba(255, 255, 255, 0.35);
-      --accent-color: #60a5fa;
-      --accent-glow: rgba(96, 165, 250, 0.4);
-      --glass-bg: rgba(20, 20, 20, 0.8);
-      --glass-border: rgba(255, 255, 255, 0.15);
-      --glass-hover: rgba(255, 255, 255, 0.25);
+      --text-muted: rgba(255, 255, 255, 0.75);
+      --text-dim: rgba(255, 255, 255, 0.4);
+      --accent-color: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.35);
+      --glass-bg: #000000;
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-hover: rgba(255, 255, 255, 0.2);
+    }
+
+    body[data-theme="solid-black"],
+    html[data-theme="solid-black"] {
+      background: #000000 !important;
+      background-color: #000000 !important;
+    }
+
+    body[data-theme="solid-black"] #ambient-canvas,
+    html[data-theme="solid-black"] #ambient-canvas {
+      display: none !important;
     }
 
     /* SOLID THEME 2: Deep Midnight Sapphire */
@@ -2313,6 +2324,18 @@
         this.particles = [];
         this.matrixCols = [];
         this.blobs = [];
+
+        const isSolidTheme = themeId && (themeId.startsWith('solid-') || themeId === 'solid-black');
+        if (isSolidTheme) {
+          if (this.canvas) this.canvas.style.display = 'none';
+          this.pause();
+          return;
+        }
+
+        if (this.canvas) this.canvas.style.display = 'block';
+        if (this.isPaused && !state.isNightstand) {
+          this.resume();
+        }
 
         if (themeId === 'starfield') {
           const numStars = Math.floor((this.width * this.height) / 3500);
