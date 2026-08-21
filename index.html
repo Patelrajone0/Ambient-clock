@@ -193,6 +193,45 @@
       --glass-hover: rgba(192, 132, 252, 0.35);
     }
 
+    /* SOLID THEME 6: Soft Warm Cream */
+    [data-theme="solid-cream"] {
+      --bg-color: #f7f4eb;
+      --text-main: #1e293b;
+      --text-muted: rgba(30, 41, 59, 0.75);
+      --text-dim: rgba(30, 41, 59, 0.45);
+      --accent-color: #d97706;
+      --accent-glow: rgba(217, 119, 6, 0.35);
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(0, 0, 0, 0.12);
+      --glass-hover: rgba(0, 0, 0, 0.18);
+    }
+
+    /* SOLID THEME 7: Deep Crimson Ruby */
+    [data-theme="solid-ruby"] {
+      --bg-color: #3b0712;
+      --text-main: #ffe4e6;
+      --text-muted: rgba(255, 228, 230, 0.75);
+      --text-dim: rgba(255, 228, 230, 0.35);
+      --accent-color: #f43f5e;
+      --accent-glow: rgba(244, 63, 94, 0.5);
+      --glass-bg: rgba(70, 15, 25, 0.8);
+      --glass-border: rgba(244, 63, 94, 0.25);
+      --glass-hover: rgba(244, 63, 94, 0.35);
+    }
+
+    /* SOLID THEME 8: Deep Oceanic Teal */
+    [data-theme="solid-ocean"] {
+      --bg-color: #042f2e;
+      --text-main: #ccfbf1;
+      --text-muted: rgba(204, 251, 241, 0.75);
+      --text-dim: rgba(204, 251, 241, 0.35);
+      --accent-color: #14b8a6;
+      --accent-glow: rgba(20, 184, 166, 0.5);
+      --glass-bg: rgba(10, 55, 52, 0.8);
+      --glass-border: rgba(20, 184, 166, 0.25);
+      --glass-hover: rgba(20, 184, 166, 0.35);
+    }
+
     /* PREMIUM THEME 1: Sakura Petal Drift (Rose Pink) */
     [data-theme="premium-sakura"] {
       --bg-color: linear-gradient(135deg, #23081e 0%, #451036 50%, #701a53 100%);
@@ -2184,6 +2223,7 @@
       if (themeId === 'solid-custom') {
         const hexColor = state.customSolidColor || '#0f172a';
         document.body.style.setProperty('--bg-color', hexColor);
+        document.body.style.background = hexColor;
 
         // Calculate contrast text colors based on background brightness
         const hex = hexColor.replace('#', '');
@@ -2194,23 +2234,25 @@
 
         if (luminance > 0.5) {
           document.body.style.setProperty('--text-main', '#1e293b');
-          document.body.style.setProperty('--text-muted', 'rgba(30, 41, 59, 0.7)');
-          document.body.style.setProperty('--text-dim', 'rgba(30, 41, 59, 0.4)');
+          document.body.style.setProperty('--text-muted', 'rgba(30, 41, 59, 0.75)');
+          document.body.style.setProperty('--text-dim', 'rgba(30, 41, 59, 0.45)');
           document.body.style.setProperty('--accent-color', '#2563eb');
-          document.body.style.setProperty('--accent-glow', 'rgba(37, 99, 235, 0.3)');
-          document.body.style.setProperty('--glass-bg', 'rgba(255, 255, 255, 0.75)');
-          document.body.style.setProperty('--glass-border', 'rgba(0, 0, 0, 0.1)');
+          document.body.style.setProperty('--accent-glow', 'rgba(37, 99, 235, 0.35)');
+          document.body.style.setProperty('--glass-bg', 'rgba(255, 255, 255, 0.85)');
+          document.body.style.setProperty('--glass-border', 'rgba(0, 0, 0, 0.12)');
         } else {
           document.body.style.setProperty('--text-main', '#f8fafc');
-          document.body.style.setProperty('--text-muted', 'rgba(248, 250, 252, 0.7)');
+          document.body.style.setProperty('--text-muted', 'rgba(248, 250, 252, 0.75)');
           document.body.style.setProperty('--text-dim', 'rgba(248, 250, 252, 0.35)');
           document.body.style.setProperty('--accent-color', '#818cf8');
           document.body.style.setProperty('--accent-glow', 'rgba(129, 140, 248, 0.4)');
-          document.body.style.setProperty('--glass-bg', 'rgba(20, 20, 30, 0.75)');
+          document.body.style.setProperty('--glass-bg', 'rgba(20, 20, 30, 0.8)');
           document.body.style.setProperty('--glass-border', 'rgba(255, 255, 255, 0.15)');
         }
       } else {
         document.body.style.removeProperty('--bg-color');
+        document.body.style.removeProperty('background');
+        document.body.style.removeProperty('background-color');
         document.body.style.removeProperty('--text-main');
         document.body.style.removeProperty('--text-muted');
         document.body.style.removeProperty('--text-dim');
@@ -4078,15 +4120,19 @@
         const customPicker = document.getElementById('custom-color-picker');
         const applyCustomBtn = document.getElementById('apply-custom-color-btn');
 
-        if (customPicker && applyCustomBtn) {
-          applyCustomBtn.addEventListener('click', () => {
+        if (customPicker) {
+          const updateCustomColor = () => {
             state.theme = 'solid-custom';
             state.customSolidColor = customPicker.value;
             allThemeCards.forEach(c => c.classList.remove('active'));
             applyTheme('solid-custom');
             this.canvasEngine.setupTheme('solid-custom');
             saveState();
-          });
+          };
+
+          if (applyCustomBtn) applyCustomBtn.addEventListener('click', updateCustomColor);
+          customPicker.addEventListener('input', updateCustomColor);
+          customPicker.addEventListener('change', updateCustomColor);
         }
 
         // Soundscape Generator Controls
