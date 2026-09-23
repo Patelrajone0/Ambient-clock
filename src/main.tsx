@@ -17,10 +17,21 @@ if ('serviceWorker' in navigator) {
       .register(swPath)
       .then((reg) => {
         console.log('[PWA] Service Worker registered with scope:', reg.scope);
+        // Force check for newest service worker version
+        reg.update();
       })
       .catch((err) => {
         console.warn('[PWA] Service Worker registration failed:', err);
       });
+  });
+
+  // Reload page when new service worker takes control so user gets fresh UI instantly
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
   });
 }
 
