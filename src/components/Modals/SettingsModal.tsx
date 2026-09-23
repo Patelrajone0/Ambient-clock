@@ -9,6 +9,8 @@ import {
 } from '../../constants';
 import { FontId, ScreensaverColorMode, ScreensaverSize, ThemeId } from '../../types';
 import { AdSenseBanner } from '../AdSense/AdSenseBanner';
+import { AmbientColorPicker } from '../UI/AmbientColorPicker';
+
 
 export const SettingsModal: React.FC = () => {
   const {
@@ -44,9 +46,6 @@ export const SettingsModal: React.FC = () => {
     setFont(fontId);
   };
 
-  const handleCustomSolidColor = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateState({ theme: 'solid-custom', customSolidColor: e.target.value });
-  };
 
   const handleGeolocate = () => {
     if (navigator.geolocation) {
@@ -177,36 +176,24 @@ export const SettingsModal: React.FC = () => {
               ))}
             </div>
 
-            {/* Custom Solid Color Picker */}
-            <div className="setting-row" style={{ marginTop: '0.75rem' }}>
-              <div className="setting-label">
-                <span>Custom Solid Color</span>
-                <span className="setting-sublabel">Pick any custom background color</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <input
-                  type="color"
-                  id="custom-color-picker"
-                  value={state.customSolidColor || '#0f172a'}
-                  onChange={handleCustomSolidColor}
-                  style={{
-                    width: '48px',
-                    height: '38px',
-                    border: '1px solid var(--glass-border)',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    background: 'none',
-                    padding: '2px',
-                  }}
-                />
-                <button
-                  className="action-btn secondary-btn"
-                  onClick={() => setTheme('solid-custom')}
-                  style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem' }}
-                >
-                  Set Color
-                </button>
-              </div>
+            {/* Custom Solid Color Studio */}
+            <div className="setting-row" style={{ marginTop: '0.75rem', flexDirection: 'column', alignItems: 'stretch' }}>
+              <AmbientColorPicker
+                color={state.customSolidColor || '#0F172A'}
+                onChange={(newColor) => {
+                  updateState({
+                    customSolidColor: newColor,
+                    ...(state.theme === 'solid-custom' ? { theme: 'solid-custom' } : {}),
+                  });
+                }}
+                onApply={(newColor) => {
+                  updateState({ customSolidColor: newColor, theme: 'solid-custom' });
+                }}
+                isActiveTheme={state.theme === 'solid-custom'}
+                label="Custom Solid Color"
+                sublabel="Select any custom dark or ambient tone"
+                applyButtonText="Set Active"
+              />
             </div>
           </div>
 
@@ -541,22 +528,12 @@ export const SettingsModal: React.FC = () => {
             </div>
 
             {state.screensaverColorMode === 'custom' && (
-              <div className="setting-row" id="screensaver-custom-color-row">
-                <div className="setting-label">Custom Screensaver Color</div>
-                <input
-                  type="color"
-                  id="screensaver-custom-color-picker"
-                  value={state.screensaverCustomColor || '#38bdf8'}
-                  onChange={e => updateState({ screensaverCustomColor: e.target.value })}
-                  style={{
-                    width: '48px',
-                    height: '38px',
-                    border: '1px solid var(--glass-border)',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    background: 'none',
-                    padding: '2px',
-                  }}
+              <div className="setting-row" id="screensaver-custom-color-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+                <AmbientColorPicker
+                  color={state.screensaverCustomColor || '#38BDF8'}
+                  onChange={(newColor) => updateState({ screensaverCustomColor: newColor })}
+                  label="Screensaver Glow Color"
+                  sublabel="Color for clock digits, particles, and ambient aura"
                 />
               </div>
             )}
