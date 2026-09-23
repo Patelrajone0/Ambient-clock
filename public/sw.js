@@ -1,14 +1,14 @@
 // Ambient Clock — Progressive Web App Service Worker
-const CACHE_NAME = 'ambient-clock-v2';
+const CACHE_NAME = 'ambient-clock-v3';
 
 const CORE_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/manifest.webmanifest',
-  '/favicon.svg',
-  '/icon-192.png',
-  '/icon-512.png',
+  './',
+  './index.html',
+  './manifest.json',
+  './manifest.webmanifest',
+  './favicon.svg',
+  './icon-192.png',
+  './icon-512.png',
 ];
 
 // Installation: pre-cache core application shell safely

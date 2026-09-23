@@ -12,8 +12,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 // Register Progressive Web App Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
+    const swPath = new URL('sw.js', window.location.href).pathname;
     navigator.serviceWorker
-      .register('/sw.js', { scope: '/' })
+      .register(swPath)
       .then((reg) => {
         console.log('[PWA] Service Worker registered with scope:', reg.scope);
       })
