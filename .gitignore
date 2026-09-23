@@ -25,3 +25,7 @@ dist-ssr
 
 # TypeScript build info
 tsconfig.tsbuildinfo
+
+# Subprojects / Unrelated
+biz-nexus/
+
