@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAmbient } from '../../context/AmbientContext';
-import { Maximize2, Moon, MoonStar, Settings } from 'lucide-react';
+import { Download, Maximize2, Moon, MoonStar, Settings } from 'lucide-react';
+import { usePWAInstall } from '../../hooks/usePWAInstall';
 
 export const CornerControls: React.FC = () => {
   const {
@@ -11,6 +12,15 @@ export const CornerControls: React.FC = () => {
     toggleFullscreen,
   } = useAmbient();
   const { isNightstand } = state;
+  const { isInstalled, canPromptDirectly, promptInstall } = usePWAInstall();
+
+  const handleInstallClick = async () => {
+    if (canPromptDirectly) {
+      const outcome = await promptInstall();
+      if (outcome === 'accepted') return;
+    }
+    openModal('install');
+  };
 
   const [isIdle, setIsIdle] = useState(false);
   const idleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -74,6 +84,19 @@ export const CornerControls: React.FC = () => {
         >
           <Moon size={20} />
         </button>
+
+        {/* Install App to Device Button */}
+        {!isInstalled && (
+          <button
+            className="corner-btn install-corner-btn"
+            id="corner-install-btn"
+            title="Install Ambient as App"
+            aria-label="Install App to Device"
+            onClick={handleInstallClick}
+          >
+            <Download size={20} />
+          </button>
+        )}
 
         {/* Settings Gear Button (S) */}
         <button

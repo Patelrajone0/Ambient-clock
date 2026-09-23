@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { AmbientState, FontId, ThemeId } from '../types';
 import { DEFAULT_STATE } from '../constants';
 
-export type ModalType = 'settings' | 'premium' | 'countdown' | 'pomodoro' | null;
+export type ModalType = 'settings' | 'premium' | 'countdown' | 'pomodoro' | 'install' | null;
 
 interface AmbientContextType {
   state: AmbientState;

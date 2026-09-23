@@ -1,0 +1,52 @@
+{
+  "name": "Ambient — Calm Idle-Time Clock",
+  "short_name": "Ambient",
+  "description": "A calm, full-screen digital clock and ambient display designed for second monitors, work, and study sessions.",
+  "id": "/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#07070a",
+  "theme_color": "#07070a",
+  "orientation": "any",
+  "categories": ["utilities", "lifestyle", "productivity"],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Screensaver",
+      "url": "./#screensaver",
+      "description": "Launch the pure black drifting OLED screensaver"
+    },
+    {
+      "name": "Nightstand Mode",
+      "url": "./#nightstand",
+      "description": "Launch Ambient in ultra-dim warm nightstand mode"
+    }
+  ]
+}

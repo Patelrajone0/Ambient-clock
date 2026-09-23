@@ -8,6 +8,8 @@ import { ScreensaverOverlay } from './components/Screensaver/ScreensaverOverlay'
 import { SettingsModal } from './components/Modals/SettingsModal';
 import { PremiumModal } from './components/Modals/PremiumModal';
 import { CountdownEditModal } from './components/Modals/CountdownEditModal';
+import { InstallModal } from './components/Modals/InstallModal';
+import { InstallBanner } from './components/UI/InstallBanner';
 
 const AmbientApp: React.FC = () => {
   return (
@@ -34,6 +36,10 @@ const AmbientApp: React.FC = () => {
       <SettingsModal />
       <PremiumModal />
       <CountdownEditModal />
+      <InstallModal />
+
+      {/* PWA Floating Install Banner */}
+      <InstallBanner />
     </>
   );
 };

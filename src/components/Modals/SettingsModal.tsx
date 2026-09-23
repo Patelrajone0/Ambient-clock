@@ -10,6 +10,8 @@ import {
 import { FontId, ScreensaverColorMode, ScreensaverSize, ThemeId } from '../../types';
 import { AdSenseBanner } from '../AdSense/AdSenseBanner';
 import { AmbientColorPicker } from '../UI/AmbientColorPicker';
+import { usePWAInstall } from '../../hooks/usePWAInstall';
+import { CheckCircle2, Download, Sparkles } from 'lucide-react';
 
 
 export const SettingsModal: React.FC = () => {
@@ -27,8 +29,17 @@ export const SettingsModal: React.FC = () => {
   } = useAmbient();
 
   const [locating, setLocating] = useState(false);
+  const { isInstalled, canPromptDirectly, promptInstall } = usePWAInstall();
 
   if (activeModal !== 'settings') return null;
+
+  const handleInstallClick = async () => {
+    if (canPromptDirectly) {
+      const outcome = await promptInstall();
+      if (outcome === 'accepted') return;
+    }
+    openModal('install');
+  };
 
   const handleThemeSelect = (themeId: ThemeId, isPremium?: boolean) => {
     if (isPremium && !state.isPremium) {
@@ -549,6 +560,71 @@ export const SettingsModal: React.FC = () => {
                 style={{ width: '100%' }}
               >
                 <span>🌙</span> Launch Screensaver Now
+              </button>
+            </div>
+          </div>
+
+          {/* App Installation & Offline Standalone Access */}
+          <div className="setting-group" id="install-app-setting-group" style={{ marginTop: '0.5rem' }}>
+            <div className="setting-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span>📱 Install Ambient to Device</span>
+              {isInstalled ? (
+                <span className="install-badge installed">
+                  <CheckCircle2 size={13} /> Installed
+                </span>
+              ) : (
+                <span className="install-badge available">
+                  <Sparkles size={13} /> App Ready
+                </span>
+              )}
+            </div>
+
+            <div className="setting-row" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.4rem' }}>
+              <div className="setting-label">
+                <span>Distraction-Free Desktop / Mobile App</span>
+                <span className="setting-sublabel">
+                  Install Ambient directly onto your PC, Mac, iPhone, iPad, or Android device. Eliminates browser tabs and URL bars for a clean, full-screen ambient display with instant launch.
+                </span>
+              </div>
+            </div>
+
+            <div className="setting-row" style={{ marginTop: '0.75rem', gap: '0.75rem' }}>
+              <button
+                className="action-btn"
+                id="settings-install-app-btn"
+                onClick={handleInstallClick}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  background: isInstalled
+                    ? 'rgba(52, 211, 153, 0.15)'
+                    : 'linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(129, 140, 248, 0.25))',
+                  border: isInstalled ? '1px solid rgba(52, 211, 153, 0.4)' : '1px solid rgba(56, 189, 248, 0.4)',
+                  color: isInstalled ? '#34d399' : '#38bdf8',
+                }}
+              >
+                {isInstalled ? (
+                  <>
+                    <CheckCircle2 size={16} /> App Already Installed
+                  </>
+                ) : (
+                  <>
+                    <Download size={16} /> Install Ambient App
+                  </>
+                )}
+              </button>
+
+              <button
+                className="action-btn secondary-btn"
+                id="settings-install-guide-btn"
+                onClick={() => openModal('install')}
+                style={{ padding: '0 1rem' }}
+                title="View installation instructions"
+              >
+                Device Guide
               </button>
             </div>
           </div>
